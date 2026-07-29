@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>投研看盘 · Watchlist</title>
+<style>
+  :root {
+    --paper:#E7ECF1; --panel:#F5F7FA; --panel2:#EDF1F5;
+    --ink:#14212E; --soft:#47586A; --faint:#7A8898;
+    --line:#C3CCD6; --lineS:#93A2B0;
+    --accent:#0A6FB8; --accentInk:#08517F; --accentSoft:#E1EDF7;
+    --good:#1B9C67; --warn:#B9821A; --crit:#C34038;
+    --goodBg:rgba(27,156,103,.12); --accBg:rgba(10,111,184,.10); --warnBg:rgba(185,130,26,.12); --critBg:rgba(195,64,56,.12);
+    --grid:rgba(16,64,110,0.055);
+    --shadow:0 1px 2px rgba(20,40,70,.06), 0 12px 40px rgba(20,40,70,.10);
+    --mono:ui-monospace,"Cascadia Code",Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#0A131C; --panel:#0F1C27; --panel2:#13222F;
+      --ink:#E4ECF3; --soft:#9EB1C1; --faint:#64768A;
+      --line:#22333F; --lineS:#38505F;
+      --accent:#2E9BE0; --accentInk:#6FC0F0; --accentSoft:#12293B;
+      --good:#33C089; --warn:#E0A83A; --crit:#E8635C;
+      --goodBg:rgba(51,192,137,.14); --accBg:rgba(46,155,224,.12); --warnBg:rgba(224,168,58,.14); --critBg:rgba(232,99,92,.14);
+      --grid:rgba(90,150,210,0.06);
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 50px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#E7ECF1; --panel:#F5F7FA; --panel2:#EDF1F5;
+    --ink:#14212E; --soft:#47586A; --faint:#7A8898;
+    --line:#C3CCD6; --lineS:#93A2B0;
+    --accent:#0A6FB8; --accentInk:#08517F; --accentSoft:#E1EDF7;
+    --good:#1B9C67; --warn:#B9821A; --crit:#C34038;
+    --goodBg:rgba(27,156,103,.12); --accBg:rgba(10,111,184,.10); --warnBg:rgba(185,130,26,.12); --critBg:rgba(195,64,56,.12);
+    --grid:rgba(16,64,110,0.055);
+    --shadow:0 1px 2px rgba(20,40,70,.06), 0 12px 40px rgba(20,40,70,.10);
+  }
+  :root[data-theme="dark"] {
+    --paper:#0A131C; --panel:#0F1C27; --panel2:#13222F;
+    --ink:#E4ECF3; --soft:#9EB1C1; --faint:#64768A;
+    --line:#22333F; --lineS:#38505F;
+    --accent:#2E9BE0; --accentInk:#6FC0F0; --accentSoft:#12293B;
+    --good:#33C089; --warn:#E0A83A; --crit:#E8635C;
+    --goodBg:rgba(51,192,137,.14); --accBg:rgba(46,155,224,.12); --warnBg:rgba(224,168,58,.14); --critBg:rgba(232,99,92,.14);
+    --grid:rgba(90,150,210,0.06);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 50px rgba(0,0,0,.45);
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    margin:0; font-family:var(--sans); color:var(--ink); line-height:1.5;
+    background-color:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+    padding:clamp(10px,2vw,28px); display:flex; justify-content:center;
+  }
+  .sheet { width:100%; max-width:980px; background:var(--panel); border:1px solid var(--lineS); box-shadow:var(--shadow); position:relative; }
+  .sheet::before,.sheet::after { content:""; position:absolute; width:12px; height:12px; pointer-events:none; }
+  .sheet::before { top:6px; left:6px; border-top:1.5px solid var(--accent); border-left:1.5px solid var(--accent); }
+  .sheet::after { bottom:6px; right:6px; border-bottom:1.5px solid var(--accent); border-right:1.5px solid var(--accent); }
+
+  header { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; padding:clamp(14px,2.5vw,24px); border-bottom:1px solid var(--line);
+           background:linear-gradient(180deg,var(--accentSoft),transparent 90%); flex-wrap:wrap; }
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); }
+  h1 { margin:4px 0 0; font-size:clamp(20px,3.4vw,28px); font-weight:800; letter-spacing:-.01em; }
+  .hdr-right { text-align:right; font-family:var(--mono); font-size:11.5px; color:var(--soft); }
+  .hdr-right .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--good); margin-right:6px; vertical-align:0; }
+  .hdr-right .dot.err { background:var(--crit); }
+  button.theme { margin-top:6px; font-family:var(--mono); font-size:11px; background:var(--panel2); color:var(--soft);
+                 border:1px solid var(--line); padding:4px 10px; cursor:pointer; border-radius:2px; }
+  button.theme:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  section { padding:clamp(10px,2vw,20px) clamp(12px,2.5vw,24px); }
+  .sec-label { display:flex; align-items:center; gap:10px; margin:6px 0 10px; }
+  .sec-label .txt { font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); }
+  .sec-label .rule { flex:1; height:1px; background:var(--line); }
+
+  .row { display:grid; grid-template-columns: 200px 150px 110px 1fr; gap:12px 16px; align-items:center;
+         background:var(--panel2); border:1px solid var(--line); padding:12px 14px; margin-bottom:8px; }
+  .who .nm { font-weight:700; font-size:14.5px; }
+  .who .cd { font-family:var(--mono); font-size:10.5px; color:var(--faint); }
+  .who .watch { font-size:11px; color:var(--soft); margin-top:3px; line-height:1.45; }
+
+  .px { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .px .p { font-size:19px; font-weight:800; }
+  .px .chg { font-size:12px; font-weight:700; margin-left:2px; }
+  .px .chg.up { color:var(--good); } .px .chg.dn { color:var(--crit); } .px .chg.flat { color:var(--faint); }
+  .px .meta { font-size:10px; color:var(--faint); margin-top:2px; }
+  .px .meta .warnsrc { color:var(--warn); }
+
+  .chip { font-family:var(--mono); font-size:11.5px; font-weight:700; padding:5px 9px; border-radius:2px; white-space:nowrap;
+          border:1px solid transparent; text-align:center; }
+  .chip.buy   { color:var(--good); background:var(--goodBg); border-color:var(--good); }
+  .chip.fair  { color:var(--accentInk); background:var(--accBg); border-color:var(--accent); }
+  .chip.high  { color:var(--warn); background:var(--warnBg); border-color:var(--warn); }
+  .chip.alert { color:var(--crit); background:var(--critBg); border-color:var(--crit); }
+  .chip.tag   { color:var(--soft); background:transparent; border-color:var(--line); font-weight:600; }
+
+  .scale { min-width:180px; }
+  .track { position:relative; height:10px; border:1px solid var(--line); background:var(--panel); }
+  .seg { position:absolute; top:0; bottom:0; opacity:.5; }
+  .seg.g { background:var(--good); } .seg.b { background:var(--accent); } .seg.y { background:var(--warn); }
+  .mark { position:absolute; top:50%; width:9px; height:9px; border-radius:50%; background:var(--ink);
+          border:2px solid var(--panel); transform:translate(-50%,-50%); }
+  .keys { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; color:var(--faint); margin-top:4px; gap:6px; flex-wrap:wrap; }
+  .keys b { font-weight:700; }
+  .keys .kg { color:var(--good); } .keys .ky { color:var(--warn); }
+  .nb { font-size:11px; color:var(--faint); font-family:var(--mono); }
+
+  footer { padding:12px clamp(12px,2.5vw,24px); border-top:1px solid var(--line); background:var(--panel2);
+           font-family:var(--mono); font-size:10.5px; color:var(--faint); line-height:1.7; }
+
+  @media (max-width:720px) {
+    .row { grid-template-columns:1fr 1fr; }
+    .who { grid-column:1 / -1; }
+    .scale { grid-column:1 / -1; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <div>
+      <div class="eyebrow">Watchlist · Bands from Research Reports</div>
+      <h1>投研看盘</h1>
+    </div>
+    <div class="hdr-right">
+      <div><span class="dot" id="live-dot"></span><span id="last-refresh">连接中…</span></div>
+      <div id="bands-updated"></div>
+      <button class="theme" id="theme-btn" type="button">切换主题</button>
+    </div>
+  </header>
+
+  <section id="groups"></section>
+
+  <footer>
+    数据:Boursorama(巴黎股实时;米兰等按其页面时效)· 某标的失败时自动以 Yahoo 补位(标注「备用源 · 延迟15分」)· 页面每 15 秒刷新<br>
+    价位带来自 Obsidian 库研究报告(bands.json,随报告更新)· 🟢 偏低可入场 / 🔵 合理 / 🟡 偏高 / 🔴 信号离场 · 研究/学习用途,非投资建议
+  </footer>
+</div>
+
+<script>
+const GROUP_TITLES = { stocks: "个股", etf: "ETF", index: "指数参考" };
+const POLL_MS = 15000;
+let BANDS = null;
+
+const fmtPrice = (v, cur) => v == null ? "—" : (cur || "") + v.toLocaleString("fr-FR", { minimumFractionDigits: v < 100 ? 2 : 2, maximumFractionDigits: v < 10 ? 3 : 2 });
+const pctCls = p => p == null ? "flat" : p > 0.001 ? "up" : p < -0.001 ? "dn" : "flat";
+const fmtPct = p => p == null ? "" : (p > 0 ? "▲+" : p < 0 ? "▼" : "") + p.toFixed(2) + "%";
+
+function statusOf(inst, price) {
+  if (inst.alert) return { cls: "alert", label: "🔴 " + inst.alert };
+  if (inst.green == null && inst.yellow == null) return { cls: "tag", label: inst.tag || "带未定 · 仅价格" };
+  if (price == null) return { cls: "tag", label: "等待数据" };
+  if (inst.strong != null && price <= inst.strong) return { cls: "buy", label: "🟢 强买区" };
+  if (inst.green != null && price <= inst.green) return { cls: "buy", label: "🟢 可入场" };
+  if (inst.yellow != null && price >= inst.yellow) return { cls: "high", label: "🟡 偏高" };
+  return { cls: "fair", label: "🔵 合理" };
+}
+
+function rulerHtml(inst) {
+  if (!inst.axis) return "";
+  const [a0, a1] = inst.axis, span = a1 - a0;
+  const pos = v => Math.max(0, Math.min(100, ((v - a0) / span) * 100));
+  const g = inst.green != null ? pos(inst.green) : 0;
+  const y = inst.yellow != null ? pos(inst.yellow) : 100;
+  return `<div class="track">
+    <div class="seg g" style="left:0%; width:${g}%"></div>
+    <div class="seg b" style="left:${g}%; width:${Math.max(0, y - g)}%"></div>
+    <div class="seg y" style="left:${y}%; width:${Math.max(0, 100 - y)}%"></div>
+    <div class="mark" data-mark="${inst.code}" style="left:0%; display:none;"></div>
+  </div>
+  <div class="keys">
+    <span class="kg">入场 ≤${inst.green}${inst.strong != null ? " · 重仓 ≤" + inst.strong : ""}</span>
+    <span class="ky">${inst.code === "1gISP" ? "离场 ≥7.6(带 ≥" + inst.yellow + ")" : "离场 ≥" + inst.yellow}</span>
+  </div>`;
+}
+
+function build() {
+  const root = document.getElementById("groups");
+  const order = ["stocks", "etf", "index"];
+  root.innerHTML = order.map(gr => {
+    const rows = BANDS.instruments.filter(i => i.group === gr).map(inst => `
+      <div class="row" id="row-${inst.code}">
+        <div class="who">
+          <div class="nm">${inst.name}</div>
+          <div class="cd">${inst.short} · ${inst.code}${inst.report ? " · 报告:" + inst.report : ""}</div>
+          ${inst.watch ? `<div class="watch">👁 ${inst.watch}</div>` : ""}
+        </div>
+        <div class="px">
+          <span class="p" data-price="${inst.code}">—</span>
+          <span class="chg flat" data-chg="${inst.code}"></span>
+          <div class="meta" data-meta="${inst.code}"></div>
+        </div>
+        <div><span class="chip tag" data-chip="${inst.code}">…</span></div>
+        <div class="scale">${rulerHtml(inst)}</div>
+      </div>`).join("");
+    return `<div class="sec-label"><span class="txt">${GROUP_TITLES[gr]}</span><span class="rule"></span></div>${rows}`;
+  }).join("");
+  document.getElementById("bands-updated").textContent = "价位带更新:" + BANDS.updated;
+}
+
+function applyQuotes(payload) {
+  const now = new Date();
+  let anyOk = false;
+  for (const inst of BANDS.instruments) {
+    const q = payload.data[inst.code];
+    if (!q) continue;
+    const priceEl = document.querySelector(`[data-price="${inst.code}"]`);
+    const chgEl = document.querySelector(`[data-chg="${inst.code}"]`);
+    const metaEl = document.querySelector(`[data-meta="${inst.code}"]`);
+    const chipEl = document.querySelector(`[data-chip="${inst.code}"]`);
+    const markEl = document.querySelector(`[data-mark="${inst.code}"]`);
+    if (q.price != null) {
+      anyOk = true;
+      priceEl.textContent = fmtPrice(q.price, inst.currency);
+      chgEl.textContent = fmtPct(q.pct);
+      chgEl.className = "chg " + pctCls(q.pct);
+      const bits = [];
+      if (q.src === "yahoo") bits.push('<span class="warnsrc">备用源 · 延迟15分</span>');
+      if (q.stale) bits.push('<span class="warnsrc">数据滞留 ' + new Date(q.t * 1000).toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"}) + "</span>");
+      metaEl.innerHTML = bits.join(" · ");
+      const st = statusOf(inst, q.price);
+      chipEl.className = "chip " + st.cls;
+      chipEl.textContent = st.label;
+      if (markEl && inst.axis) {
+        const [a0, a1] = inst.axis;
+        const p = Math.max(0, Math.min(100, ((q.price - a0) / (a1 - a0)) * 100));
+        markEl.style.left = p + "%";
+        markEl.style.display = "block";
+      }
+    }
+  }
+  const dot = document.getElementById("live-dot");
+  dot.className = "dot" + (anyOk ? "" : " err");
+  document.getElementById("last-refresh").textContent =
+    "最后刷新 " + now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+async function poll() {
+  try {
+    const res = await fetch("/api/quotes", { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    applyQuotes(await res.json());
+  } catch (e) {
+    const dot = document.getElementById("live-dot");
+    dot.className = "dot err";
+    document.getElementById("last-refresh").textContent = "刷新失败,重试中…";
+  }
+}
+
+document.getElementById("theme-btn").addEventListener("click", () => {
+  const r = document.documentElement;
+  const cur = r.getAttribute("data-theme") ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  r.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+});
+
+fetch("bands.json").then(r => r.json()).then(b => {
+  BANDS = b;
+  build();
+  poll();
+  setInterval(poll, POLL_MS);
+});
+</script>
+</body>
+</html>

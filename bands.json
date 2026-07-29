@@ -1,0 +1,62 @@
+{
+  "updated": "2026-07-29",
+  "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。分析 skill 更新此文件后 git push 即自动部署。",
+  "instruments": [
+    {
+      "code": "1rPBVI", "yahoo": "BVI.PA", "name": "Bureau Veritas", "short": "BVI", "group": "stocks", "currency": "€",
+      "green": 28.5, "strong": 24, "yellow": 36, "axis": [20, 48],
+      "watch": "Wendel 配售窗口(每日 AMF)· 10月 Q3 看 Industry",
+      "report": "Bureau_Veritas_异动归因与复检_20260729", "alert": null
+    },
+    {
+      "code": "1gUCG", "yahoo": "UCG.MI", "name": "UniCredit", "short": "UCG", "group": "stocks", "currency": "€",
+      "green": 70, "strong": null, "yellow": 95, "axis": [50, 130],
+      "watch": "3Q26 财报(10月末)· CBK 控制权 · Orcel 去留",
+      "report": "UniCredit投资研究报告_20260729", "alert": null
+    },
+    {
+      "code": "1gISP", "yahoo": "ISP.MI", "name": "Intesa Sanpaolo", "short": "ISP", "group": "stocks", "currency": "€",
+      "green": 5.5, "strong": 4.4, "yellow": 6.8, "axis": [3.5, 8.5],
+      "watch": "9/10 EGM(MPS 增发)· Messina 是否加价",
+      "report": "Intesa_Sanpaolo投资研究报告_20260729", "alert": null
+    },
+    {
+      "code": "1rPBNP", "yahoo": "BNP.PA", "name": "BNP Paribas", "short": "BNP", "group": "stocks", "currency": "€",
+      "green": 90, "strong": 87, "yellow": 115, "axis": [70, 140],
+      "watch": "增量复检待做(基线 0704)· ROTE 向 13% 兑现",
+      "report": "BNP_Paribas_投资研究报告_20260704", "alert": null
+    },
+    {
+      "code": "1rPDSY", "yahoo": "DSY.PA", "name": "Dassault Systèmes", "short": "DSY", "group": "stocks", "currency": "€",
+      "green": 19, "strong": 16, "yellow": 30, "axis": [10, 36],
+      "watch": "AI 颠覆 vs 周期之辩 · 增长是否回暖",
+      "report": "PEA候选-5家深度分析-20260704", "alert": null
+    },
+    {
+      "code": "1rPPUB", "yahoo": "PUB.PA", "name": "Publicis", "short": "PUB", "group": "stocks", "currency": "€",
+      "green": 88, "strong": 80, "yellow": 115, "axis": [60, 140],
+      "watch": "GenAI 叙事 · 广告业 2026 落后组",
+      "report": "PEA候选-5家深度分析-20260704", "alert": null
+    },
+    {
+      "code": "1rTWPEA", "yahoo": "WPEA.PA", "name": "iShares MSCI World Swap PEA", "short": "WPEA", "group": "etf", "currency": "€",
+      "green": null, "strong": null, "yellow": null, "axis": null,
+      "tag": "核心仓 · 定投",
+      "watch": "正常定投;WPEA/DCAM 费率战",
+      "report": "WPEA_ETF研究报告", "alert": null
+    },
+    {
+      "code": "1rTBRES", "yahoo": "BRES.PA", "name": "Amundi STOXX Eu 600 Basic Resources", "short": "BRES", "group": "etf", "currency": "€",
+      "green": null, "strong": null, "yellow": null, "axis": null,
+      "tag": "战术仓 · 需商品论点",
+      "watch": "论点核对:是论点在走还是动能在走",
+      "report": "BRES_ETF研究报告", "alert": null
+    },
+    {
+      "code": "1rPCAC", "yahoo": "^FCHI", "name": "CAC 40", "short": "CAC 40", "group": "index", "currency": "",
+      "green": null, "strong": null, "yellow": null, "axis": null,
+      "tag": "参考指数",
+      "watch": null, "report": null, "alert": null
+    }
+  ]
+}
