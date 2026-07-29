@@ -42,7 +42,14 @@ module.exports = async (req, res) => {
     const j = await r.json();
     const qt = j && j.d && j.d.QuoteTab;
     if (!Array.isArray(qt) || qt.length < 2) throw new Error("no data");
-    const points = qt.map((p) => ({ t: toEpoch(p.d), c: p.c }));
+    // 排序 + 去重:Bourso 分钟流偶有乱序/重复时间戳,会让折线回跳画出横穿乱线
+    const byT = new Map();
+    for (const p of qt) {
+      if (p == null || p.c == null || !Number.isFinite(p.c)) continue;
+      byT.set(toEpoch(p.d), p.c); // 同一时间戳保留最后一条
+    }
+    const points = [...byT.entries()].sort((a, b) => a[0] - b[0]).map(([t, c]) => ({ t, c }));
+    if (points.length < 2) throw new Error("no data");
     const body = JSON.stringify({ code, period, points });
     cache[key] = { at: Date.now(), body };
     res.status(200).send(body);

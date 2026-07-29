@@ -62,7 +62,7 @@
     background-size:22px 22px;
     padding:clamp(10px,2vw,28px); display:flex; justify-content:center;
   }
-  .sheet { width:100%; max-width:980px; background:var(--panel); border:1px solid var(--lineS); box-shadow:var(--shadow); position:relative; }
+  .sheet { width:100%; max-width:1180px; background:var(--panel); border:1px solid var(--lineS); box-shadow:var(--shadow); position:relative; }
   .sheet::before,.sheet::after { content:""; position:absolute; width:12px; height:12px; pointer-events:none; }
   .sheet::before { top:6px; left:6px; border-top:1.5px solid var(--accent); border-left:1.5px solid var(--accent); }
   .sheet::after { bottom:6px; right:6px; border-bottom:1.5px solid var(--accent); border-right:1.5px solid var(--accent); }
@@ -76,35 +76,35 @@
   .hdr-right .dot.err { background:var(--crit); }
   button.theme { margin-top:6px; font-family:var(--mono); font-size:11px; background:var(--panel2); color:var(--soft);
                  border:1px solid var(--line); padding:4px 10px; cursor:pointer; border-radius:2px; }
-  button.theme:focus-visible, .toggle:focus-visible, .ptab:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  button.theme:focus-visible, .ptab:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
   section { padding:clamp(10px,2vw,20px) clamp(12px,2.5vw,24px); }
   .sec-label { display:flex; align-items:center; gap:10px; margin:6px 0 10px; }
   .sec-label .txt { font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); }
   .sec-label .rule { flex:1; height:1px; background:var(--line); }
 
-  .card { border:1px solid var(--line); margin-bottom:8px; background:var(--panel2); }
-  .row { display:grid; grid-template-columns: 190px 150px 105px 1fr 34px; gap:12px 16px; align-items:center; padding:12px 14px; }
-  .who .nm { font-weight:700; font-size:14.5px; }
+  .card { display:grid; grid-template-columns: 300px 1fr; gap:0; border:1px solid var(--line); margin-bottom:10px; background:var(--panel2); }
+  .left { padding:14px; border-right:1px solid var(--line); display:flex; flex-direction:column; gap:10px; }
+  .who .nm { font-weight:700; font-size:15px; }
   .who .cd { font-family:var(--mono); font-size:10.5px; color:var(--faint); }
-  .who .watch { font-size:11px; color:var(--soft); margin-top:3px; line-height:1.45; }
+  .who .watch { font-size:11px; color:var(--soft); margin-top:4px; line-height:1.5; }
 
+  .pxline { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .px { font-family:var(--mono); font-variant-numeric:tabular-nums; }
-  .px .p { font-size:19px; font-weight:800; }
+  .px .p { font-size:21px; font-weight:800; }
   .px .chg { font-size:12px; font-weight:700; margin-left:2px; }
   .px .chg.up { color:var(--good); } .px .chg.dn { color:var(--crit); } .px .chg.flat { color:var(--faint); }
-  .px .meta { font-size:10px; color:var(--faint); margin-top:2px; }
-  .px .meta .warnsrc { color:var(--warn); }
+  .meta { font-size:10px; color:var(--faint); font-family:var(--mono); }
+  .meta .warnsrc { color:var(--warn); }
 
-  .chip { font-family:var(--mono); font-size:11.5px; font-weight:700; padding:5px 9px; border-radius:2px; white-space:nowrap;
-          border:1px solid transparent; text-align:center; display:inline-block; }
+  .chip { font-family:var(--mono); font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:2px; white-space:nowrap;
+          border:1px solid transparent; display:inline-block; }
   .chip.buy   { color:var(--good); background:var(--goodBg); border-color:var(--good); }
   .chip.fair  { color:var(--accentInk); background:var(--accBg); border-color:var(--accent); }
   .chip.high  { color:var(--warn); background:var(--warnBg); border-color:var(--warn); }
   .chip.alert { color:var(--crit); background:var(--critBg); border-color:var(--crit); }
   .chip.tag   { color:var(--soft); background:transparent; border-color:var(--line); font-weight:600; }
 
-  .scale { min-width:160px; }
   .track { position:relative; height:10px; border:1px solid var(--line); background:var(--panel); }
   .seg { position:absolute; top:0; bottom:0; opacity:.5; }
   .seg.g { background:var(--good); } .seg.b { background:var(--accent); } .seg.y { background:var(--warn); }
@@ -113,29 +113,23 @@
   .keys { display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; color:var(--faint); margin-top:4px; gap:6px; flex-wrap:wrap; }
   .keys .kg { color:var(--good); } .keys .ky { color:var(--warn); }
 
-  .toggle { font-family:var(--mono); font-size:13px; width:28px; height:28px; border:1px solid var(--line); background:var(--panel);
-            color:var(--soft); cursor:pointer; border-radius:2px; line-height:1; }
-  .toggle[aria-expanded="true"] { color:var(--accentInk); border-color:var(--accent); }
-
-  .chartbox { display:none; border-top:1px solid var(--line); padding:10px 14px 14px; }
-  .chartbox.open { display:block; }
-  .ptabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
-  .ptab { font-family:var(--mono); font-size:11px; font-weight:700; padding:4px 10px; border:1px solid var(--line);
+  .right { padding:10px 14px 12px; min-width:0; }
+  .ptabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:6px; }
+  .ptab { font-family:var(--mono); font-size:11px; font-weight:700; padding:3px 9px; border:1px solid var(--line);
           background:var(--panel); color:var(--soft); cursor:pointer; border-radius:2px; }
   .ptab.on { color:var(--accentInk); border-color:var(--accent); background:var(--accBg); }
   .chartwrap { position:relative; }
   .chartwrap svg { display:block; width:100%; height:auto; }
-  .cstatus { font-family:var(--mono); font-size:11px; color:var(--faint); padding:18px 0; text-align:center; }
+  .cstatus { font-family:var(--mono); font-size:11px; color:var(--faint); padding:28px 0; text-align:center; }
   .tip { position:absolute; pointer-events:none; display:none; background:var(--panel); border:1px solid var(--lineS);
-         font-family:var(--mono); font-size:11px; padding:4px 8px; border-radius:2px; color:var(--ink); box-shadow:var(--shadow); white-space:nowrap; }
+         font-family:var(--mono); font-size:11px; padding:4px 8px; border-radius:2px; color:var(--ink); box-shadow:var(--shadow); white-space:nowrap; z-index:2; }
 
   footer { padding:12px clamp(12px,2.5vw,24px); border-top:1px solid var(--line); background:var(--panel2);
            font-family:var(--mono); font-size:10.5px; color:var(--faint); line-height:1.7; }
 
-  @media (max-width:720px) {
-    .row { grid-template-columns:1fr 1fr 34px; }
-    .who { grid-column:1 / -1; }
-    .scale { grid-column:1 / span 2; }
+  @media (max-width:760px) {
+    .card { grid-template-columns:1fr; }
+    .left { border-right:none; border-bottom:1px solid var(--line); }
   }
 </style>
 </head>
@@ -156,18 +150,19 @@
   <section id="groups"></section>
 
   <footer>
-    数据:Boursorama(巴黎股实时;米兰等按其页面时效)· 某标的失败时自动以 Yahoo 补位(标注「备用源 · 延迟15分」)· 报价每 15 秒刷新,走势图当日线 1 分钟粒度<br>
-    价位带来自 Obsidian 库研究报告(bands.json,随报告更新)· 🟢 偏低可入场 / 🔵 合理 / 🟡 偏高 / 🔴 信号离场 · 走势图上虚线 = 入场/离场阈值 · 研究/学习用途,非投资建议
+    数据:Boursorama(巴黎股实时;米兰等按其页面时效)· 某标的失败时自动以 Yahoo 补位(标注「备用源 · 延迟15分」)· 报价每 15 秒刷新,1J/5J 为分钟粒度<br>
+    价位带来自 Obsidian 库研究报告(bands.json,随报告更新)· 🟢 偏低可入场 / 🔵 合理 / 🟡 偏高 / 🔴 信号离场 · 走势图虚线 = 入场/离场阈值 · 研究/学习用途,非投资建议
   </footer>
 </div>
 
 <script>
 const GROUP_TITLES = { stocks: "个股", etf: "ETF", index: "指数参考" };
 const PERIODS = ["1J","5J","1M","3M","6M","1A","5A","10A"];
+const DEFAULT_PERIOD = "1J";
 const POLL_MS = 15000;
 let BANDS = null;
 const histCache = {}; // code|period -> {at, points}
-const openPeriod = {}; // code -> period
+const curPeriod = {}; // code -> period
 
 const fmtPrice = (v, cur) => v == null ? "—" : (cur || "") + v.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: v < 10 ? 3 : 2 });
 const pctCls = p => p == null ? "flat" : p > 0.001 ? "up" : p < -0.001 ? "dn" : "flat";
@@ -189,7 +184,8 @@ function rulerHtml(inst) {
   const pos = v => Math.max(0, Math.min(100, ((v - a0) / span) * 100));
   const g = inst.green != null ? pos(inst.green) : 0;
   const y = inst.yellow != null ? pos(inst.yellow) : 100;
-  return `<div class="track">
+  return `<div>
+  <div class="track">
     <div class="seg g" style="left:0%; width:${g}%"></div>
     <div class="seg b" style="left:${g}%; width:${Math.max(0, y - g)}%"></div>
     <div class="seg y" style="left:${y}%; width:${Math.max(0, 100 - y)}%"></div>
@@ -198,7 +194,7 @@ function rulerHtml(inst) {
   <div class="keys">
     <span class="kg">入场 ≤${inst.green}${inst.strong != null ? " · 重仓 ≤" + inst.strong : ""}</span>
     <span class="ky">${inst.code === "1gISP" ? "离场 ≥7.6(带 ≥" + inst.yellow + ")" : "离场 ≥" + inst.yellow}</span>
-  </div>`;
+  </div></div>`;
 }
 
 function build() {
@@ -207,28 +203,25 @@ function build() {
   root.innerHTML = order.map(gr => {
     const rows = BANDS.instruments.filter(i => i.group === gr).map(inst => `
       <div class="card" id="card-${inst.code}">
-        <div class="row">
+        <div class="left">
           <div class="who">
             <div class="nm">${inst.name}</div>
             <div class="cd">${inst.short} · ${inst.code}${inst.report ? " · 报告:" + inst.report : ""}</div>
             ${inst.watch ? `<div class="watch">👁 ${inst.watch}</div>` : ""}
           </div>
-          <div class="px">
-            <span class="p" data-price="${inst.code}">—</span>
-            <span class="chg flat" data-chg="${inst.code}"></span>
-            <div class="meta" data-meta="${inst.code}"></div>
+          <div class="pxline">
+            <span class="px"><span class="p" data-price="${inst.code}">—</span><span class="chg flat" data-chg="${inst.code}"></span></span>
+            <span class="chip tag" data-chip="${inst.code}">…</span>
           </div>
-          <div><span class="chip tag" data-chip="${inst.code}">…</span></div>
-          <div class="scale">${rulerHtml(inst)}</div>
-          <button class="toggle" type="button" aria-expanded="false" aria-label="展开走势图"
-                  data-toggle="${inst.code}">📈</button>
+          <div class="meta" data-meta="${inst.code}"></div>
+          ${rulerHtml(inst)}
         </div>
-        <div class="chartbox" data-chartbox="${inst.code}">
+        <div class="right">
           <div class="ptabs" data-ptabs="${inst.code}">
-            ${PERIODS.map(p => `<button class="ptab${p === "1M" ? " on" : ""}" type="button" data-period="${p}">${p}</button>`).join("")}
+            ${PERIODS.map(p => `<button class="ptab${p === DEFAULT_PERIOD ? " on" : ""}" type="button" data-period="${p}">${p}</button>`).join("")}
           </div>
           <div class="chartwrap" data-chartwrap="${inst.code}">
-            <div class="cstatus">点击周期加载走势…</div>
+            <div class="cstatus">加载中…</div>
             <div class="tip" data-tip="${inst.code}"></div>
           </div>
         </div>
@@ -237,15 +230,6 @@ function build() {
   }).join("");
   document.getElementById("bands-updated").textContent = "价位带更新:" + BANDS.updated;
 
-  document.querySelectorAll("[data-toggle]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const code = btn.dataset.toggle;
-      const box = document.querySelector(`[data-chartbox="${code}"]`);
-      const open = box.classList.toggle("open");
-      btn.setAttribute("aria-expanded", open);
-      if (open) loadChart(code, openPeriod[code] || "1M");
-    });
-  });
   document.querySelectorAll("[data-ptabs]").forEach(tabs => {
     tabs.addEventListener("click", e => {
       const b = e.target.closest(".ptab");
@@ -254,24 +238,26 @@ function build() {
       loadChart(tabs.dataset.ptabs, b.dataset.period);
     });
   });
+  // 默认全部加载(轻微错峰,避免瞬时 9 个并发)
+  BANDS.instruments.forEach((inst, i) => setTimeout(() => loadChart(inst.code, DEFAULT_PERIOD), i * 120));
 }
 
 async function loadChart(code, period) {
-  openPeriod[code] = period;
+  curPeriod[code] = period;
   const wrap = document.querySelector(`[data-chartwrap="${code}"]`);
   const key = code + "|" + period;
   const hit = histCache[key];
   if (hit && Date.now() - hit.at < 60_000) return drawChart(code, period, hit.points);
-  wrap.querySelector("svg")?.remove();
-  wrap.insertAdjacentHTML("afterbegin", '<div class="cstatus">加载中…</div>');
   try {
     const res = await fetch(`/api/history?code=${code}&period=${period}`);
     if (!res.ok) throw new Error(res.status);
     const j = await res.json();
     histCache[key] = { at: Date.now(), points: j.points };
-    if (openPeriod[code] === period) drawChart(code, period, j.points);
+    if (curPeriod[code] === period) drawChart(code, period, j.points);
   } catch (e) {
-    wrap.querySelectorAll(".cstatus").forEach(n => n.textContent = "走势数据暂不可用,稍后重试");
+    wrap.querySelector("svg")?.remove();
+    wrap.querySelectorAll(".cstatus").forEach(n => n.remove());
+    wrap.insertAdjacentHTML("afterbegin", '<div class="cstatus">走势数据暂不可用,稍后重试</div>');
   }
 }
 
@@ -284,7 +270,7 @@ function drawChart(code, period, points) {
     wrap.insertAdjacentHTML("afterbegin", '<div class="cstatus">无数据</div>');
     return;
   }
-  const W = 680, H = 190, padL = 8, padR = 58, padT = 12, padB = 22;
+  const W = 720, H = 168, padL = 8, padR = 62, padT = 12, padB = 20;
   const xs = points.map(p => p.t), ys = points.map(p => p.c);
   let lo = Math.min(...ys), hi = Math.max(...ys);
   const thresholds = [];
@@ -300,15 +286,15 @@ function drawChart(code, period, points) {
   const gridVals = [0.25, 0.5, 0.75].map(f => lo + (hi - lo) * f);
   const fmtT = t => {
     const d = new Date(t);
-    return period === "1J"
-      ? String(d.getUTCHours()).padStart(2, "0") + ":" + String(d.getUTCMinutes()).padStart(2, "0")
+    return (period === "1J" || period === "5J")
+      ? (period === "5J" ? String(d.getUTCDate()).padStart(2, "0") + "/" + String(d.getUTCMonth() + 1).padStart(2, "0") + " " : "") +
+        String(d.getUTCHours()).padStart(2, "0") + ":" + String(d.getUTCMinutes()).padStart(2, "0")
       : String(d.getUTCDate()).padStart(2, "0") + "/" + String(d.getUTCMonth() + 1).padStart(2, "0") + (["1A","5A","10A"].includes(period) ? "/" + String(d.getUTCFullYear()).slice(2) : "");
   };
   const last = points[points.length - 1];
-  const colGood = "var(--good)", colWarn = "var(--warn)";
   const thLines = thresholds.map(t =>
-    `<line x1="${padL}" x2="${W - padR}" y1="${Y(t.v).toFixed(1)}" y2="${Y(t.v).toFixed(1)}" stroke="${t.cls === "g" ? colGood : colWarn}" stroke-width="1" stroke-dasharray="5 4" opacity=".75"/>
-     <text x="${W - padR + 4}" y="${(Y(t.v) + 3.5).toFixed(1)}" font-size="10" fill="${t.cls === "g" ? colGood : colWarn}" font-family="var(--mono)">${t.cls === "g" ? "入场" : "离场"} ${t.v}</text>`).join("");
+    `<line x1="${padL}" x2="${W - padR}" y1="${Y(t.v).toFixed(1)}" y2="${Y(t.v).toFixed(1)}" stroke="${t.cls === "g" ? "var(--good)" : "var(--warn)"}" stroke-width="1" stroke-dasharray="5 4" opacity=".75"/>
+     <text x="${W - padR + 4}" y="${(Y(t.v) + 3.5).toFixed(1)}" font-size="10" fill="${t.cls === "g" ? "var(--good)" : "var(--warn)"}" font-family="var(--mono)">${t.cls === "g" ? "入场" : "离场"} ${t.v}</text>`).join("");
   const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${inst.name} ${period} 走势">
     ${gridVals.map(v => `<line x1="${padL}" x2="${W - padR}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="var(--line)" stroke-width="1" opacity=".6"/>
       <text x="${W - padR + 4}" y="${(Y(v) + 3.5).toFixed(1)}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)">${v.toFixed(v < 10 ? 2 : v < 1000 ? 1 : 0)}</text>`).join("")}
@@ -317,8 +303,8 @@ function drawChart(code, period, points) {
     ${thLines}
     <circle cx="${X(last.t).toFixed(1)}" cy="${Y(last.c).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.5"/>
     <text x="${W - padR + 4}" y="${(Y(last.c) + 3.5).toFixed(1)}" font-size="10.5" font-weight="700" fill="var(--accentInk)" font-family="var(--mono)">${last.c.toFixed(last.c < 10 ? 3 : 2)}</text>
-    <text x="${padL}" y="${H - 6}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)">${fmtT(t0)}</text>
-    <text x="${W - padR}" y="${H - 6}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)" text-anchor="end">${fmtT(t1)}</text>
+    <text x="${padL}" y="${H - 5}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)">${fmtT(t0)}</text>
+    <text x="${W - padR}" y="${H - 5}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)" text-anchor="end">${fmtT(t1)}</text>
     <line data-cross x1="0" x2="0" y1="${padT}" y2="${H - padB}" stroke="var(--lineS)" stroke-width="1" opacity="0"/>
     <circle data-crossdot r="3" fill="var(--ink)" opacity="0"/>
   </svg>`;
@@ -337,7 +323,7 @@ function drawChart(code, period, points) {
     cross.setAttribute("x1", X(best.t)); cross.setAttribute("x2", X(best.t)); cross.setAttribute("opacity", ".7");
     crossDot.setAttribute("cx", X(best.t)); crossDot.setAttribute("cy", Y(best.c)); crossDot.setAttribute("opacity", "1");
     tip.style.display = "block";
-    tip.style.left = Math.min(((X(best.t) / W) * r.width) + 10, r.width - 130) + "px";
+    tip.style.left = Math.min(((X(best.t) / W) * r.width) + 10, r.width - 150) + "px";
     tip.style.top = ((Y(best.c) / H) * r.height - 30) + "px";
     tip.textContent = fmtT(best.t) + " · " + (inst.currency || "") + best.c.toFixed(best.c < 10 ? 3 : 2);
   });
