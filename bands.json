@@ -139,13 +139,16 @@
       "short": "BRES",
       "group": "etf",
       "currency": "€",
-      "green": null,
-      "strong": null,
-      "yellow": null,
-      "axis": null,
-      "tag": "战术仓 · 需商品论点",
-      "watch": "论点核对:是论点在走还是动能在走",
-      "report": "BRES_ETF研究报告",
+      "green": 99,
+      "strong": 82,
+      "yellow": 146,
+      "axis": [
+        69,
+        159
+      ],
+      "tag": "战术仓 · 论点锚定带(有效至2027-01)",
+      "watch": "主锚 P/B 2.26 近十年高位 · 铜价历史新高 · 失效看中国需求/供给纪律",
+      "report": "BRES_etf_recheck_20260730",
       "alert": null
     },
     {
