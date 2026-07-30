@@ -101,6 +101,10 @@
   .who .nm a.bourso:hover .ext { color:var(--accent); }
   .who .cd { font-family:var(--mono); font-size:10.5px; color:var(--faint); }
   .who .watch { font-size:11px; color:var(--soft); margin-top:4px; line-height:1.5; }
+  .earn { display:inline-block; font-family:var(--mono); font-size:10px; padding:1px 6px; border-radius:3px;
+          margin-left:6px; vertical-align:1px; color:var(--faint); border:1px solid var(--line); }
+  .earn.soon { color:var(--warn); border-color:var(--warn); background:var(--warnBg); font-weight:700; }
+  .earn.due { color:var(--crit); border-color:var(--crit); background:var(--critBg); font-weight:700; }
 
   .pxline { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .px { font-family:var(--mono); font-variant-numeric:tabular-nums; }
@@ -177,6 +181,18 @@ const fmtPrice = (v, cur) => v == null ? "—" : (cur || "") + v.toLocaleString(
 const pctCls = p => p == null ? "flat" : p > 0.001 ? "up" : p < -0.001 ? "dn" : "flat";
 const fmtPct = p => p == null ? "" : (p > 0 ? "▲+" : p < 0 ? "▼" : "") + p.toFixed(2) + "%";
 
+function earnBadge(inst) {
+  if (!inst.earnings) return "";
+  const d = new Date(inst.earnings + "T00:00:00");
+  if (isNaN(d)) return "";
+  const days = Math.round((d - new Date(new Date().toDateString())) / 86400000);
+  const dm = String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0");
+  if (days < 0) return `<span class="earn due" title="财报已出,跑 /earnings-review 复检后更新日期">📊 财报已出 ${-days}天 · 待复检</span>`;
+  if (days === 0) return `<span class="earn due">📊 今日财报</span>`;
+  if (days <= 14) return `<span class="earn soon">📅 财报 ${dm} · ${days}天</span>`;
+  return `<span class="earn">📅 财报 ${dm} · ${days}天</span>`;
+}
+
 function statusOf(inst, price) {
   if (inst.alert) return { cls: "alert", label: "🔴 " + inst.alert };
   if (inst.green == null && inst.yellow == null) return { cls: "tag", label: inst.tag || "带未定 · 仅价格" };
@@ -252,7 +268,7 @@ function build() {
         <div class="left">
           <div class="who">
             <div class="nm"><span class="drag" title="拖拽排序">⠿</span><a class="bourso" href="https://www.boursorama.com/cours/${inst.code}/" target="_blank" rel="noopener">${inst.name}<span class="ext">↗</span></a></div>
-            <div class="cd">${inst.short} · ${inst.code}${inst.report ? " · 报告:" + inst.report : ""}</div>
+            <div class="cd">${inst.short} · ${inst.code}${inst.report ? " · 报告:" + inst.report : ""}${earnBadge(inst)}</div>
             ${inst.watch ? `<div class="watch">👁 ${inst.watch}</div>` : ""}
           </div>
           <div class="pxline">

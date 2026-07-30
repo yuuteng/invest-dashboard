@@ -21,10 +21,11 @@
 ## 维护规约(重要)
 
 1. **报告更新 → 同步价位带**:每当库里出新研究报告/增量复检,更新 `bands.json` 对应标的的 `green/strong/yellow/axis/watch/report`,改 `updated` 日期,commit + push。字段可为 `null`(页面显示"带未定,仅价格")。
-2. **新增标的**:在 `bands.json.instruments` 加一条(必填 `code`=Bourso 代码、`yahoo`=备源代码、`name/short/group/currency`)。Bourso 代码在 boursorama.com 搜索标的后取 URL 中的代码(巴黎股 `1rPXXX`、意大利 `1gXXX`、trackers `1rTXXX`)。
-3. **信号离场**:某标的触发减仓信号时,把 `alert` 字段写成一句话(如 `"指引下修"`),页面变 🔴;解除填回 `null`。
-4. **视觉系统已定稿**(工程数据表风格,与 Obsidian 库投资卡片同族,双主题 token),不重做设计;改样式先看 `:root` token。
-5. Bourso 改版导致解析断裂:先查 `api/quotes.js` 的正则锚点(`c-instrument--last" data-ist-last>`),再查 `api/history.js` 两个接口返回结构。
+2. **财报日提醒**:个股有 `earnings` 字段(下次财报日 `YYYY-MM-DD`)。页面角标:>14 天灰、≤14 天黄、当日/已过红("财报已出·待复检")。**每次 `/earnings-review` 复检后必须把 `earnings` 更新为下一季日期**,否则角标一直红。ETF/指数不填。
+3. **新增标的**:在 `bands.json.instruments` 加一条(必填 `code`=Bourso 代码、`yahoo`=备源代码、`name/short/group/currency`)。Bourso 代码在 boursorama.com 搜索标的后取 URL 中的代码(巴黎股 `1rPXXX`、意大利 `1gXXX`、trackers `1rTXXX`)。
+4. **信号离场**:某标的触发减仓信号时,把 `alert` 字段写成一句话(如 `"指引下修"`),页面变 🔴;解除填回 `null`。
+5. **视觉系统已定稿**(工程数据表风格,与 Obsidian 库投资卡片同族,双主题 token),不重做设计;改样式先看 `:root` token。
+6. Bourso 改版导致解析断裂:先查 `api/quotes.js` 的正则锚点(`c-instrument--last" data-ist-last>`),再查 `api/history.js` 两个接口返回结构。
 
 ## 技术备忘
 
