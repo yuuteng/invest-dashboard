@@ -176,6 +176,7 @@ const POLL_MS = 15000;
 let BANDS = null;
 const histCache = {}; // code|period -> {at, points}
 const curPeriod = {}; // code -> period
+const chartView = {}; // code -> {key, a, b, pan} 滚轮缩放窗口(a/b 为全量数据的小数索引)
 
 const fmtPrice = (v, cur) => v == null ? "—" : (cur || "") + v.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: v < 10 ? 3 : 2 });
 const pctCls = p => p == null ? "flat" : p > 0.001 ? "up" : p < -0.001 ? "dn" : "flat";
@@ -324,15 +325,24 @@ async function loadChart(code, period) {
   }
 }
 
-function drawChart(code, period, points) {
+function drawChart(code, period, allPoints) {
   const inst = BANDS.instruments.find(i => i.code === code);
   const wrap = document.querySelector(`[data-chartwrap="${code}"]`);
   wrap.querySelectorAll(".cstatus").forEach(n => n.remove());
   wrap.querySelector("svg")?.remove();
-  if (!points || points.length < 2) {
+  if (!allPoints || allPoints.length < 2) {
     wrap.insertAdjacentHTML("afterbegin", '<div class="cstatus">无数据</div>');
     return;
   }
+  // 缩放窗口:切周期(key 变)则复原;a/b 越界(数据刷新变长/短)则钳制
+  const N = allPoints.length, vKey = code + "|" + period;
+  let view = chartView[code];
+  if (!view || view.key !== vKey) view = chartView[code] = { key: vKey, a: 0, b: N - 1, pan: null };
+  view.a = Math.max(0, Math.min(view.a, N - 2));
+  view.b = Math.max(view.a + 1, Math.min(view.b, N - 1));
+  const ai = Math.floor(view.a), bi = Math.ceil(view.b);
+  const zoomed = ai > 0 || bi < N - 1;
+  const points = allPoints.slice(ai, bi + 1);
   const W = 720, H = 168, padL = 8, padR = 62, padT = 12, padB = 20;
   const xs = points.map(p => p.t), ys = points.map(p => p.c);
   let lo = Math.min(...ys), hi = Math.max(...ys);
@@ -384,6 +394,7 @@ function drawChart(code, period, points) {
     <text x="${W - padR + 4}" y="${(Y(last.c) + 3.5).toFixed(1)}" font-size="10.5" font-weight="700" fill="var(--accentInk)" font-family="var(--mono)">${last.c.toFixed(last.c < 10 ? 3 : 2)}</text>
     <text x="${padL}" y="${H - 5}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)">${fmtT(t0)}</text>
     <text x="${W - padR}" y="${H - 5}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)" text-anchor="end">${fmtT(t1)}</text>
+    ${zoomed ? `<text x="${W - padR - 6}" y="${padT + 9}" text-anchor="end" font-size="9" fill="var(--faint)" font-family="var(--mono)">🔍 ${ai + 1}–${bi + 1}/${N} · 拖拽平移 · 双击复原</text>` : ""}
     <line data-cross x1="0" x2="0" y1="${padT}" y2="${H - padB}" stroke="var(--lineS)" stroke-width="1" opacity="0"/>
     <circle data-crossdot r="3" fill="var(--ink)" opacity="0"/>
   </svg>`;
@@ -393,8 +404,22 @@ function drawChart(code, period, points) {
   const tip = wrap.querySelector(`[data-tip="${code}"]`);
   const cross = svgEl.querySelector("[data-cross]");
   const crossDot = svgEl.querySelector("[data-crossdot]");
+  svgEl.style.cursor = zoomed ? "grab" : "";
   svgEl.addEventListener("mousemove", ev => {
     const r = svgEl.getBoundingClientRect();
+    // 左键按住 = 平移缩放窗口(pan 状态存 view 上,重绘换 svg 元素也不丢)
+    if (view.pan && (ev.buttons & 1)) {
+      const span = view.pan.b - view.pan.a;
+      const di = ((view.pan.x - ev.clientX) / r.width) * (W / (W - padL - padR)) * span;
+      let a = view.pan.a + di, b = view.pan.b + di;
+      if (a < 0) { a = 0; b = span; }
+      if (b > N - 1) { b = N - 1; a = b - span; }
+      view.a = a; view.b = b;
+      tip.style.display = "none";
+      drawChart(code, period, allPoints);
+      return;
+    }
+    if (view.pan && !(ev.buttons & 1)) view.pan = null;
     const mx = ((ev.clientX - r.left) / r.width) * W;
     const bi = Math.max(0, Math.min(n - 1, Math.round(((mx - padL) / (W - padL - padR)) * (n - 1))));
     const best = points[bi];
@@ -403,7 +428,7 @@ function drawChart(code, period, points) {
     tip.style.display = "block";
     tip.style.left = Math.min(((X(bi) / W) * r.width) + 10, r.width - 190) + "px";
     tip.style.top = ((Y(best.c) / H) * r.height - 30) + "px";
-    const base = points[0].c;
+    const base = allPoints[0].c; // 涨跌% 始终相对整个周期起点,不随缩放窗口漂移
     const pv = base ? ((best.c - base) / base) * 100 : null;
     const pvCls = pv == null ? "faint" : pv > 0.001 ? "good" : pv < -0.001 ? "crit" : "faint";
     tip.innerHTML = fmtT(best.t) + " · " + (inst.currency || "") + best.c.toFixed(best.c < 10 ? 3 : 2) +
@@ -411,6 +436,33 @@ function drawChart(code, period, points) {
   });
   svgEl.addEventListener("mouseleave", () => {
     tip.style.display = "none"; cross.setAttribute("opacity", "0"); crossDot.setAttribute("opacity", "0");
+  });
+  // 滚轮缩放:以光标为锚点收放窗口(Bourso 同款);最小窗口 8 个点
+  svgEl.addEventListener("wheel", ev => {
+    const r = svgEl.getBoundingClientRect();
+    const mx = ((ev.clientX - r.left) / r.width) * W;
+    const frac = Math.max(0, Math.min(1, (mx - padL) / (W - padL - padR)));
+    const span = view.b - view.a;
+    const anchor = view.a + frac * span;
+    let ns = span * (ev.deltaY < 0 ? 0.8 : 1.25);
+    ns = Math.max(Math.min(8, N - 1), Math.min(N - 1, ns));
+    if (ns === span) return; // 已到边界:不拦截,让页面正常滚动
+    ev.preventDefault();
+    let a = anchor - frac * ns, b = a + ns;
+    if (a < 0) { a = 0; b = ns; }
+    if (b > N - 1) { b = N - 1; a = b - ns; }
+    view.a = a; view.b = b;
+    drawChart(code, period, allPoints);
+  }, { passive: false });
+  svgEl.addEventListener("mousedown", ev => {
+    if (!zoomed || ev.button !== 0) return;
+    view.pan = { x: ev.clientX, a: view.a, b: view.b };
+    ev.preventDefault();
+  });
+  svgEl.addEventListener("mouseup", () => { view.pan = null; });
+  svgEl.addEventListener("dblclick", () => {
+    view.a = 0; view.b = N - 1; view.pan = null;
+    drawChart(code, period, allPoints);
   });
 }
 
