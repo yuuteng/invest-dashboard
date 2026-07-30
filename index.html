@@ -62,7 +62,7 @@
     background-size:22px 22px;
     padding:clamp(10px,2vw,28px); display:flex; justify-content:center;
   }
-  .sheet { width:100%; max-width:1180px; background:var(--panel); border:1px solid var(--lineS); box-shadow:var(--shadow); position:relative; }
+  .sheet { width:100%; max-width:2600px; background:var(--panel); border:1px solid var(--lineS); box-shadow:var(--shadow); position:relative; }
   .sheet::before,.sheet::after { content:""; position:absolute; width:12px; height:12px; pointer-events:none; }
   .sheet::before { top:6px; left:6px; border-top:1.5px solid var(--accent); border-left:1.5px solid var(--accent); }
   .sheet::after { bottom:6px; right:6px; border-bottom:1.5px solid var(--accent); border-right:1.5px solid var(--accent); }
@@ -83,9 +83,22 @@
   .sec-label .txt { font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); }
   .sec-label .rule { flex:1; height:1px; background:var(--line); }
 
-  .card { display:grid; grid-template-columns: 300px 1fr; gap:0; border:1px solid var(--line); margin-bottom:10px; background:var(--panel2); }
-  .left { padding:14px; border-right:1px solid var(--line); display:flex; flex-direction:column; gap:10px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(900px,100%), 1fr)); gap:10px; margin-bottom:10px; }
+  .cardbox { container-type:inline-size; min-width:0; }
+  .card { display:grid; grid-template-columns:1fr; gap:0; border:1px solid var(--line); background:var(--panel2); height:100%; }
+  .left { padding:14px; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:10px; }
+  @container (min-width:660px) {
+    .card { grid-template-columns:300px 1fr; }
+    .left { border-bottom:none; border-right:1px solid var(--line); }
+  }
   .who .nm { font-weight:700; font-size:15px; }
+  .who .nm .drag { cursor:grab; color:var(--faint); font-size:12px; margin-right:6px; user-select:none; }
+  .who .nm .drag:hover { color:var(--accent); }
+  .cardbox.dragging { opacity:.45; }
+  .who .nm a.bourso { color:inherit; text-decoration:none; }
+  .who .nm a.bourso:hover { color:var(--accent); text-decoration:underline; }
+  .who .nm .ext { font-size:11px; color:var(--faint); margin-left:4px; vertical-align:super; }
+  .who .nm a.bourso:hover .ext { color:var(--accent); }
   .who .cd { font-family:var(--mono); font-size:10.5px; color:var(--faint); }
   .who .watch { font-size:11px; color:var(--soft); margin-top:4px; line-height:1.5; }
 
@@ -127,10 +140,6 @@
   footer { padding:12px clamp(12px,2.5vw,24px); border-top:1px solid var(--line); background:var(--panel2);
            font-family:var(--mono); font-size:10.5px; color:var(--faint); line-height:1.7; }
 
-  @media (max-width:760px) {
-    .card { grid-template-columns:1fr; }
-    .left { border-right:none; border-bottom:1px solid var(--line); }
-  }
 </style>
 </head>
 <body>
@@ -197,15 +206,52 @@ function rulerHtml(inst) {
   </div></div>`;
 }
 
+const ORDER_KEY = "cardOrder.v1";
+function loadOrder() { try { return JSON.parse(localStorage.getItem(ORDER_KEY)) || {}; } catch { return {}; } }
+function saveOrder() {
+  const o = {};
+  document.querySelectorAll(".cards").forEach(c => {
+    o[c.dataset.group] = [...c.querySelectorAll(".cardbox")].map(b => b.dataset.code);
+  });
+  localStorage.setItem(ORDER_KEY, JSON.stringify(o));
+}
+
+function wireDrag() {
+  let dragEl = null;
+  document.querySelectorAll(".cardbox").forEach(box => {
+    box.querySelector(".drag").addEventListener("mousedown", () => { box.draggable = true; });
+    box.addEventListener("dragstart", e => {
+      dragEl = box; box.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", box.dataset.code);
+    });
+    box.addEventListener("dragend", () => {
+      box.draggable = false; box.classList.remove("dragging");
+      if (dragEl) { dragEl = null; saveOrder(); }
+    });
+    box.addEventListener("dragover", e => {
+      if (!dragEl || dragEl === box || box.parentElement !== dragEl.parentElement) return;
+      e.preventDefault();
+      const r = box.getBoundingClientRect();
+      const before = (e.clientX - r.left) / r.width < 0.5;
+      box.parentElement.insertBefore(dragEl, before ? box : box.nextSibling);
+    });
+    box.addEventListener("drop", e => e.preventDefault());
+  });
+}
+
 function build() {
   const root = document.getElementById("groups");
   const order = ["stocks", "etf", "index"];
+  const saved = loadOrder();
   root.innerHTML = order.map(gr => {
-    const rows = BANDS.instruments.filter(i => i.group === gr).map(inst => `
-      <div class="card" id="card-${inst.code}">
+    const list = BANDS.instruments.filter(i => i.group === gr);
+    const ord = saved[gr];
+    if (Array.isArray(ord)) list.sort((a, b) => ((ord.indexOf(a.code) + 1) || 1e9) - ((ord.indexOf(b.code) + 1) || 1e9));
+    const rows = list.map(inst => `
+      <div class="cardbox" data-code="${inst.code}"><div class="card" id="card-${inst.code}">
         <div class="left">
           <div class="who">
-            <div class="nm">${inst.name}</div>
+            <div class="nm"><span class="drag" title="拖拽排序">⠿</span><a class="bourso" href="https://www.boursorama.com/cours/${inst.code}/" target="_blank" rel="noopener">${inst.name}<span class="ext">↗</span></a></div>
             <div class="cd">${inst.short} · ${inst.code}${inst.report ? " · 报告:" + inst.report : ""}</div>
             ${inst.watch ? `<div class="watch">👁 ${inst.watch}</div>` : ""}
           </div>
@@ -225,8 +271,8 @@ function build() {
             <div class="tip" data-tip="${inst.code}"></div>
           </div>
         </div>
-      </div>`).join("");
-    return `<div class="sec-label"><span class="txt">${GROUP_TITLES[gr]}</span><span class="rule"></span></div>${rows}`;
+      </div></div>`).join("");
+    return `<div class="sec-label"><span class="txt">${GROUP_TITLES[gr]}</span><span class="rule"></span></div><div class="cards" data-group="${gr}">${rows}</div>`;
   }).join("");
   document.getElementById("bands-updated").textContent = "价位带更新:" + BANDS.updated;
 
@@ -238,6 +284,7 @@ function build() {
       loadChart(tabs.dataset.ptabs, b.dataset.period);
     });
   });
+  wireDrag();
   // 默认全部加载(轻微错峰,避免瞬时 9 个并发)
   BANDS.instruments.forEach((inst, i) => setTimeout(() => loadChart(inst.code, DEFAULT_PERIOD), i * 120));
 }
@@ -278,11 +325,13 @@ function drawChart(code, period, points) {
   if (inst.yellow != null && inst.yellow > lo * 0.85 && inst.yellow < hi * 1.15) thresholds.push({ v: inst.yellow, cls: "y" });
   thresholds.forEach(t => { lo = Math.min(lo, t.v); hi = Math.max(hi, t.v); });
   const spanY = (hi - lo) || 1; lo -= spanY * 0.06; hi += spanY * 0.06;
-  const t0 = xs[0], t1 = xs[xs.length - 1], spanX = (t1 - t0) || 1;
-  const X = t => padL + ((t - t0) / spanX) * (W - padL - padR);
+  const t0 = xs[0], t1 = xs[xs.length - 1];
+  // x 轴按数据点序号(压缩隔夜/周末非交易时段,避免空档拉出长直线)
+  const n = points.length;
+  const X = i => padL + (i / (n - 1)) * (W - padL - padR);
   const Y = v => padT + (1 - (v - lo) / (hi - lo)) * (H - padT - padB);
-  const line = points.map((p, i) => (i ? "L" : "M") + X(p.t).toFixed(1) + " " + Y(p.c).toFixed(1)).join(" ");
-  const area = line + ` L ${X(t1).toFixed(1)} ${(H - padB).toFixed(1)} L ${X(t0).toFixed(1)} ${(H - padB).toFixed(1)} Z`;
+  const line = points.map((p, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(p.c).toFixed(1)).join(" ");
+  const area = line + ` L ${X(n - 1).toFixed(1)} ${(H - padB).toFixed(1)} L ${X(0).toFixed(1)} ${(H - padB).toFixed(1)} Z`;
   const gridVals = [0.25, 0.5, 0.75].map(f => lo + (hi - lo) * f);
   const fmtT = t => {
     const d = new Date(t);
@@ -292,6 +341,19 @@ function drawChart(code, period, points) {
       : String(d.getUTCDate()).padStart(2, "0") + "/" + String(d.getUTCMonth() + 1).padStart(2, "0") + (["1A","5A","10A"].includes(period) ? "/" + String(d.getUTCFullYear()).slice(2) : "");
   };
   const last = points[points.length - 1];
+  // 5J:日期分隔虚线 + 标签
+  let daySeps = "";
+  if (period === "5J") {
+    let prev = new Date(points[0].t).getUTCDate();
+    for (let i = 1; i < n; i++) {
+      const d = new Date(points[i].t);
+      if (d.getUTCDate() !== prev) {
+        prev = d.getUTCDate();
+        daySeps += `<line x1="${X(i).toFixed(1)}" x2="${X(i).toFixed(1)}" y1="${padT}" y2="${H - padB}" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 4" opacity=".7"/>
+          <text x="${(X(i) + 3).toFixed(1)}" y="${H - 5}" font-size="9" fill="var(--faint)" font-family="var(--mono)">${String(d.getUTCDate()).padStart(2, "0")}/${String(d.getUTCMonth() + 1).padStart(2, "0")}</text>`;
+      }
+    }
+  }
   const thLines = thresholds.map(t =>
     `<line x1="${padL}" x2="${W - padR}" y1="${Y(t.v).toFixed(1)}" y2="${Y(t.v).toFixed(1)}" stroke="${t.cls === "g" ? "var(--good)" : "var(--warn)"}" stroke-width="1" stroke-dasharray="5 4" opacity=".75"/>
      <text x="${W - padR + 4}" y="${(Y(t.v) + 3.5).toFixed(1)}" font-size="10" fill="${t.cls === "g" ? "var(--good)" : "var(--warn)"}" font-family="var(--mono)">${t.cls === "g" ? "入场" : "离场"} ${t.v}</text>`).join("");
@@ -300,8 +362,9 @@ function drawChart(code, period, points) {
       <text x="${W - padR + 4}" y="${(Y(v) + 3.5).toFixed(1)}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)">${v.toFixed(v < 10 ? 2 : v < 1000 ? 1 : 0)}</text>`).join("")}
     <path d="${area}" fill="var(--areaFill)"/>
     <path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>
+    ${daySeps}
     ${thLines}
-    <circle cx="${X(last.t).toFixed(1)}" cy="${Y(last.c).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.5"/>
+    <circle cx="${X(n - 1).toFixed(1)}" cy="${Y(last.c).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.5"/>
     <text x="${W - padR + 4}" y="${(Y(last.c) + 3.5).toFixed(1)}" font-size="10.5" font-weight="700" fill="var(--accentInk)" font-family="var(--mono)">${last.c.toFixed(last.c < 10 ? 3 : 2)}</text>
     <text x="${padL}" y="${H - 5}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)">${fmtT(t0)}</text>
     <text x="${W - padR}" y="${H - 5}" font-size="9.5" fill="var(--faint)" font-family="var(--mono)" text-anchor="end">${fmtT(t1)}</text>
@@ -317,15 +380,18 @@ function drawChart(code, period, points) {
   svgEl.addEventListener("mousemove", ev => {
     const r = svgEl.getBoundingClientRect();
     const mx = ((ev.clientX - r.left) / r.width) * W;
-    const t = t0 + ((mx - padL) / (W - padL - padR)) * spanX;
-    let best = points[0], bd = Infinity;
-    for (const p of points) { const d = Math.abs(p.t - t); if (d < bd) { bd = d; best = p; } }
-    cross.setAttribute("x1", X(best.t)); cross.setAttribute("x2", X(best.t)); cross.setAttribute("opacity", ".7");
-    crossDot.setAttribute("cx", X(best.t)); crossDot.setAttribute("cy", Y(best.c)); crossDot.setAttribute("opacity", "1");
+    const bi = Math.max(0, Math.min(n - 1, Math.round(((mx - padL) / (W - padL - padR)) * (n - 1))));
+    const best = points[bi];
+    cross.setAttribute("x1", X(bi)); cross.setAttribute("x2", X(bi)); cross.setAttribute("opacity", ".7");
+    crossDot.setAttribute("cx", X(bi)); crossDot.setAttribute("cy", Y(best.c)); crossDot.setAttribute("opacity", "1");
     tip.style.display = "block";
-    tip.style.left = Math.min(((X(best.t) / W) * r.width) + 10, r.width - 150) + "px";
+    tip.style.left = Math.min(((X(bi) / W) * r.width) + 10, r.width - 190) + "px";
     tip.style.top = ((Y(best.c) / H) * r.height - 30) + "px";
-    tip.textContent = fmtT(best.t) + " · " + (inst.currency || "") + best.c.toFixed(best.c < 10 ? 3 : 2);
+    const base = points[0].c;
+    const pv = base ? ((best.c - base) / base) * 100 : null;
+    const pvCls = pv == null ? "faint" : pv > 0.001 ? "good" : pv < -0.001 ? "crit" : "faint";
+    tip.innerHTML = fmtT(best.t) + " · " + (inst.currency || "") + best.c.toFixed(best.c < 10 ? 3 : 2) +
+      (pv == null ? "" : ` <span style="color:var(--${pvCls});font-weight:700">${pv > 0 ? "+" : ""}${pv.toFixed(2)}%</span>`);
   });
   svgEl.addEventListener("mouseleave", () => {
     tip.style.display = "none"; cross.setAttribute("opacity", "0"); crossDot.setAttribute("opacity", "0");
