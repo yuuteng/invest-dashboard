@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-29",
+  "updated": "2026-07-30",
   "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。earnings = 下次财报日(个股,过期页面变红提醒跑 /earnings-review,复检后更新为下一季日期)。分析 skill 更新此文件后 git push 即自动部署。",
   "instruments": [
     {
@@ -16,8 +16,8 @@
         20,
         48
       ],
-      "watch": "Wendel 配售窗口(每日 AMF)· 10月 Q3 看 Industry",
-      "report": "Bureau_Veritas_异动归因与复检_20260729",
+      "watch": "Wendel 配售窗口开 · 已入买点带 · 10月 Q3 看 Industry",
+      "report": "Bureau_Veritas_综合复检_20260730",
       "alert": null,
       "earnings": "2026-10-21"
     },
@@ -66,15 +66,15 @@
       "short": "BNP",
       "group": "stocks",
       "currency": "€",
-      "green": 90,
-      "strong": 87,
-      "yellow": 115,
+      "green": 92,
+      "strong": 88,
+      "yellow": 120,
       "axis": [
         70,
         140
       ],
-      "watch": "增量复检待做(基线 0704)· ROTE 向 13% 兑现",
-      "report": "BNP_Paribas_投资研究报告_20260704",
+      "watch": "3Q26(10-28)验 ROTE 成色与回购落地 · 盯苏丹上诉",
+      "report": "BNP_Paribas_综合复检_20260730",
       "alert": null,
       "earnings": "2026-10-28"
     },
@@ -92,8 +92,8 @@
         10,
         36
       ],
-      "watch": "AI 颠覆 vs 周期之辩 · 增长是否回暖",
-      "report": "PEA候选-5家深度分析-20260704",
+      "watch": "Q2 回暖 +4%cc · 盯 Q3 能否 +5%、Medidata 止血",
+      "report": "Dassault_Systemes_综合复检_20260730",
       "alert": null,
       "earnings": "2026-10-28"
     },
@@ -111,8 +111,8 @@
         60,
         140
       ],
-      "watch": "GenAI 叙事 · 广告业 2026 落后组",
-      "report": "PEA候选-5家深度分析-20260704",
+      "watch": "H1 指引上调、零客户流失 · 已出便宜带,10/22 Q3 再验",
+      "report": "Publicis_综合复检_20260730",
       "alert": null,
       "earnings": "2026-10-22"
     },
