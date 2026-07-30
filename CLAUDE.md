@@ -15,7 +15,7 @@
 | `index.html` | 全部 UI(单文件):15s 轮询报价、价位带标尺、可展开 SVG 走势图 |
 | `bands.json` | **数据核心**:标的池 + 价位带 + 观察哨 + 报告名。json 即数据库,git 即版本史 |
 | `api/quotes.js` | 报价代理:Bourso 主源(解析 `data-ist-last`/`data-ist-variation` 首个匹配)→ 失败 Yahoo v8 chart 补位 → 再失败返回上次值标 stale;s-maxage=15 |
-| `api/history.js` | 历史序列代理:1J 走 `UpdateCharts?period=-1`(分钟线),其余走 `GetTicksEOD`(日线);**必须带 `X-Requested-With: XMLHttpRequest` 头,否则返回空数组** |
+| `api/history.js` | 历史序列代理:全部走 `GetTicksEOD`(length≤5 返回分钟线,其余日线);**必须带 `X-Requested-With: XMLHttpRequest` 头,否则返回空数组** |
 | `scripts/dev_server.js` | 本地测试:`node scripts/dev_server.js` → localhost:8899,模拟 Vercel 路由 |
 
 ## 维护规约(重要)
@@ -30,7 +30,7 @@
 
 - 数据时效:Bourso 巴黎股实时,米兰等按其页面时效;Yahoo 补位为 15 分钟延迟(页面有角标)
 - ETF/指数的 `/cours/{code}/` 是 301 跳转,Node fetch 自动跟随(curl 测试要加 `-L`)
-- 分钟线时间格式 `yyMMddHHmm`(如 2607291057 = 2026-07-29 10:57);日线 `d` = 天数纪元(×86400000 = epoch ms)
+- 分钟线时间格式 `yyMMdd` + **当日分钟数**(后 4 位是 minutes-since-midnight,不是 HHmm:2607290540 = 2026-07-29 09:00 开盘,后 4 位 1055 = 17:35 收盘竞价);日线 `d` = 天数纪元(×86400000 = epoch ms)
 - Vercel Hobby 限额宽裕:s-maxage CDN 缓存挡掉大部分函数调用
 - 本地验证流程:`node scripts/dev_server.js` → 浏览器/Playwright 打 localhost:8899;测函数单独跑 `node -e "require('./api/quotes.js')(...)"`
 

@@ -1,7 +1,7 @@
 // /api/history?code=1rPBVI&period=1M — Boursorama 历史序列代理
 // period → GetTicksEOD length(仅标准档有效,非标值会退化为分钟流):
 //   1J:1(当日分钟线) 5J:5(五日分钟线) 1M:30 3M:90 6M:180 1A:365 5A:1825 10A:3650(日线)
-// QuoteTab.d 两种格式:> 1e9 为 yyMMddHHmm 分钟时间戳;否则为天数纪元
+// QuoteTab.d 两种格式:> 1e9 为 yyMMdd+当日分钟数(后4位是 minutes-since-midnight,非 HHmm:0540=9h00 开盘,1055=17h35 收盘竞价);否则为天数纪元
 // 返回: { points: [{t: epochMs, c: close}], period, code }
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
@@ -11,9 +11,10 @@ const cache = {}; // key -> {at, body}
 
 function toEpoch(d) {
   if (d > 1e9) {
-    // yyMMddHHmm(交易所本地时,仅作展示轴)
+    // yyMMdd + 当日分钟数(交易所本地时,仅作展示轴)。按 HHmm 解析是错的:
+    // 分钟数 599→600 会时间倒跳、且相邻小时段 40% 时间戳互撞,去重后丢点画出长直线
     const s = String(d).padStart(10, "0");
-    return Date.UTC(2000 + +s.slice(0, 2), +s.slice(2, 4) - 1, +s.slice(4, 6), +s.slice(6, 8), +s.slice(8, 10));
+    return Date.UTC(2000 + +s.slice(0, 2), +s.slice(2, 4) - 1, +s.slice(4, 6)) + +s.slice(6) * 60000;
   }
   return d * 86400000; // 天数纪元
 }
