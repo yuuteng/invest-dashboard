@@ -267,7 +267,7 @@ function build() {
       <div class="cardbox" data-code="${inst.code}"><div class="card" id="card-${inst.code}">
         <div class="left">
           <div class="who">
-            <div class="nm"><span class="drag" title="拖拽排序">⠿</span><a class="bourso" href="https://www.boursorama.com/cours/${inst.code}/" target="_blank" rel="noopener">${inst.name}<span class="ext">↗</span></a></div>
+            <div class="nm"><span class="drag" title="拖拽排序">⠿</span><a class="bourso" href="https://www.boursorama.com${inst.page || `/cours/${inst.code}/`}" target="_blank" rel="noopener">${inst.name}<span class="ext">↗</span></a></div>
             <div class="cd">${inst.short} · ${inst.code}${inst.report ? " · 报告:" + inst.report : ""}${earnBadge(inst)}</div>
             ${inst.watch ? `<div class="watch">👁 ${inst.watch}</div>` : ""}
           </div>

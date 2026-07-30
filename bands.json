@@ -163,6 +163,40 @@
       "watch": null,
       "report": null,
       "alert": null
+    },
+    {
+      "code": "9xBTCUSD",
+      "yahoo": "BTC-USD",
+      "page": "/bourse/devises/cryptoactifs-bitcoin-dollar-BTC-USD/",
+      "name": "Bitcoin",
+      "short": "BTC/USD",
+      "group": "index",
+      "currency": "$",
+      "green": null,
+      "strong": null,
+      "yellow": null,
+      "axis": null,
+      "tag": "观察 · 暂不买入",
+      "watch": null,
+      "report": null,
+      "alert": null
+    },
+    {
+      "code": "9xETHUSD",
+      "yahoo": "ETH-USD",
+      "page": "/bourse/devises/cryptoactifs-ethereum-dollar-ETH-USD/",
+      "name": "Ethereum",
+      "short": "ETH/USD",
+      "group": "index",
+      "currency": "$",
+      "green": null,
+      "strong": null,
+      "yellow": null,
+      "axis": null,
+      "tag": "观察 · 暂不买入",
+      "watch": null,
+      "report": null,
+      "alert": null
     }
   ]
 }

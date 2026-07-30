@@ -32,11 +32,21 @@ async function fetchWithTimeout(url, ms) {
   }
 }
 
-async function fromBourso(code) {
-  const html = await fetchWithTimeout(`https://www.boursorama.com/cours/${code}/`, 6000);
+async function fromBourso(inst) {
+  const url = inst.page
+    ? `https://www.boursorama.com${inst.page}`
+    : `https://www.boursorama.com/cours/${inst.code}/`;
+  let html = await fetchWithTimeout(url, 6000);
+  if (inst.page) {
+    // 专属页(如 crypto)首个 data-ist-last 是页头行情条的别家标的,
+    // 必须定位到 data-ist="{code}" 块内再取值
+    const i = html.indexOf(`data-ist="${inst.code}"`);
+    if (i < 0) throw new Error("bourso ist block not found");
+    html = html.slice(i, i + 12000);
+  }
   // 页面首个 c-instrument--last / --variation 即主标的(已逐码验证)
-  const mLast = html.match(/c-instrument--last"\s*data-ist-last>([^<]+)</);
-  const mVar = html.match(/c-instrument--variation"\s*data-ist-variation>([^<]+)</);
+  const mLast = html.match(/c-instrument--last"\s*data-ist-last>([^<]+)</) || html.match(/data-ist-last[^>]*>([^<]+)</);
+  const mVar = html.match(/c-instrument--variation"\s*data-ist-variation>([^<]+)</) || html.match(/data-ist-variation[^>]*>([^<]+)</);
   const price = parseFrNumber(mLast && mLast[1]);
   const rawVar = mVar && mVar[1];
   const pct = rawVar ? parseFloat(rawVar.replace(/[\s %]/g, "").replace(",", ".")) : null;
@@ -61,7 +71,7 @@ async function fromYahoo(ysym) {
 async function quoteOne(inst) {
   const now = Math.floor(Date.now() / 1000);
   try {
-    const q = await fromBourso(inst.code);
+    const q = await fromBourso(inst);
     const out = { ...q, t: now, stale: false };
     lastGood[inst.code] = out;
     return out;
