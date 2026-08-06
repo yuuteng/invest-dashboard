@@ -325,13 +325,13 @@ function build() {
           <div class="meta" data-meta="${inst.code}"></div>
           <div class="pos" data-pos="${inst.code}"></div>
           <div class="posform" data-posform="${inst.code}">
-            <span>数量</span><input data-f="qty" type="text" inputmode="decimal" placeholder="0">
             <span>成本均价</span><input data-f="avg" type="text" inputmode="decimal" placeholder="0.00">
+            <span>数量</span><input data-f="qty" type="text" inputmode="decimal" placeholder="0">
             <button class="mini" type="button" data-act="save" data-code="${inst.code}">保存</button>
             <button class="mini" type="button" data-act="clear" data-code="${inst.code}">清除</button>
             <span class="sep"></span>
-            <span>加仓</span><input data-f="aqty" type="text" inputmode="decimal" placeholder="数量">
-            <span>@</span><input data-f="aprice" type="text" inputmode="decimal" placeholder="价格">
+            <span>加仓 价格</span><input data-f="aprice" type="text" inputmode="decimal" placeholder="价格">
+            <span>× 数量</span><input data-f="aqty" type="text" inputmode="decimal" placeholder="数量">
             <button class="mini" type="button" data-act="add" data-code="${inst.code}">追加(重算均价)</button>
           </div>
           ${rulerHtml(inst)}
@@ -657,7 +657,7 @@ function openPosForm(code) {
   f.querySelector('[data-f="aqty"]').value = "";
   f.querySelector('[data-f="aprice"]').value = "";
   f.classList.add("on");
-  f.querySelector('[data-f="qty"]').focus();
+  f.querySelector('[data-f="avg"]').focus();
 }
 
 function wirePositions() {
