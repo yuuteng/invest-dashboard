@@ -13,6 +13,7 @@
 | 文件 | 作用 |
 |------|------|
 | `index.html` | 全部 UI(单文件):15s 轮询报价、价位带标尺、可展开 SVG 走势图 |
+| 持仓(无文件) | 数量 + 成本均价存**浏览器 localStorage** `positions.v1`,页面「持仓总览」面板算浮动/今日盈亏。**不进仓库**(红线);备份走面板「导出 JSON」 |
 | `bands.json` | **数据核心**:标的池 + 价位带 + 观察哨 + 报告名。json 即数据库,git 即版本史 |
 | `api/quotes.js` | 报价代理:Bourso 主源(解析 `data-ist-last`/`data-ist-variation` 首个匹配)→ 失败 Yahoo v8 chart 补位 → 再失败返回上次值标 stale;s-maxage=15 |
 | `api/history.js` | 历史序列代理:全部走 `GetTicksEOD`(length≤5 返回分钟线,其余日线);**必须带 `X-Requested-With: XMLHttpRequest` 头,否则返回空数组** |

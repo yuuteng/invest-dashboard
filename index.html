@@ -141,6 +141,40 @@
   .tip { position:absolute; pointer-events:none; display:none; background:var(--panel); border:1px solid var(--lineS);
          font-family:var(--mono); font-size:11px; padding:4px 8px; border-radius:2px; color:var(--ink); box-shadow:var(--shadow); white-space:nowrap; z-index:2; }
 
+  /* ---- 持仓(本地) ---- */
+  button.mini { font-family:var(--mono); font-size:10.5px; background:var(--panel); color:var(--soft);
+                border:1px solid var(--line); padding:2px 8px; cursor:pointer; border-radius:2px; }
+  button.mini:hover { color:var(--accentInk); border-color:var(--accent); }
+  button.mini:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .num.up { color:var(--good); } .num.dn { color:var(--crit); } .num.flat { color:var(--faint); }
+
+  .pos { font-family:var(--mono); font-size:11.5px; font-variant-numeric:tabular-nums; color:var(--soft);
+         display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .pos b { color:var(--ink); }
+  .posform { display:none; gap:6px 8px; flex-wrap:wrap; align-items:center; font-family:var(--mono); font-size:11px;
+             color:var(--faint); border:1px dashed var(--lineS); background:var(--panel); padding:8px; }
+  .posform.on { display:flex; }
+  .posform input { font-family:var(--mono); font-size:11.5px; width:74px; padding:3px 5px; background:var(--panel2);
+                   color:var(--ink); border:1px solid var(--line); border-radius:2px; }
+  .posform .sep { flex-basis:100%; height:0; }
+
+  .kpis { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .kpi { border:1px solid var(--line); background:var(--panel2); padding:8px 14px; min-width:148px; }
+  .kpi .k { font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); }
+  .kpi .v { font-family:var(--mono); font-size:18px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .kpi .s { font-family:var(--mono); font-size:10.5px; color:var(--faint); }
+
+  .ptable { overflow-x:auto; border:1px solid var(--line); background:var(--panel2); }
+  table.pf { border-collapse:collapse; width:100%; font-family:var(--mono); font-size:11.5px; font-variant-numeric:tabular-nums; }
+  table.pf th { text-align:right; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint);
+                font-weight:600; padding:6px 10px; border-bottom:1px solid var(--lineS); white-space:nowrap; }
+  table.pf td { text-align:right; padding:5px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  table.pf th.l, table.pf td.l { text-align:left; }
+  table.pf tr.tot td { font-weight:800; background:var(--panel); border-bottom:none; border-top:1px solid var(--lineS); }
+  table.pf td .jump { cursor:pointer; color:inherit; background:none; border:none; font:inherit; padding:0; text-align:left; }
+  table.pf td .jump:hover { color:var(--accent); text-decoration:underline; }
+  .pfhint { font-family:var(--mono); font-size:11px; color:var(--faint); border:1px dashed var(--lineS); padding:10px 12px; background:var(--panel2); }
+
   footer { padding:12px clamp(12px,2.5vw,24px); border-top:1px solid var(--line); background:var(--panel2);
            font-family:var(--mono); font-size:10.5px; color:var(--faint); line-height:1.7; }
 
@@ -160,11 +194,23 @@
     </div>
   </header>
 
+  <section id="pfsec">
+    <div class="sec-label">
+      <span class="txt">Portfolio · 持仓总览</span>
+      <span class="rule"></span>
+      <button class="mini" id="pf-export" type="button">导出 JSON</button>
+      <button class="mini" id="pf-import" type="button">导入</button>
+      <input type="file" id="pf-file" accept=".json,application/json" hidden>
+    </div>
+    <div id="pfbody"></div>
+  </section>
+
   <section id="groups"></section>
 
   <footer>
     数据:Boursorama(巴黎股实时;米兰等按其页面时效)· 某标的失败时自动以 Yahoo 补位(标注「备用源 · 延迟15分」)· 报价每 15 秒刷新,1J/5J 为分钟粒度<br>
-    价位带来自 Obsidian 库研究报告(bands.json,随报告更新)· 🟢 偏低可入场 / 🔵 合理 / 🟡 偏高 / 🔴 信号离场 · 走势图虚线 = 入场/离场阈值 · 研究/学习用途,非投资建议
+    价位带来自 Obsidian 库研究报告(bands.json,随报告更新)· 🟢 偏低可入场 / 🔵 合理 / 🟡 偏高 / 🔴 信号离场 · 走势图虚线 = 入场/离场阈值 · 研究/学习用途,非投资建议<br>
+    持仓数量/成本只存本浏览器 localStorage,不上传、不进仓库 · 换设备或清缓存前用「导出 JSON」备份 · 盈亏未计手续费、税与汇率
   </footer>
 </div>
 
@@ -277,6 +323,17 @@ function build() {
             <span class="chip tag" data-chip="${inst.code}">…</span>
           </div>
           <div class="meta" data-meta="${inst.code}"></div>
+          <div class="pos" data-pos="${inst.code}"></div>
+          <div class="posform" data-posform="${inst.code}">
+            <span>数量</span><input data-f="qty" type="text" inputmode="decimal" placeholder="0">
+            <span>成本均价</span><input data-f="avg" type="text" inputmode="decimal" placeholder="0.00">
+            <button class="mini" type="button" data-act="save" data-code="${inst.code}">保存</button>
+            <button class="mini" type="button" data-act="clear" data-code="${inst.code}">清除</button>
+            <span class="sep"></span>
+            <span>加仓</span><input data-f="aqty" type="text" inputmode="decimal" placeholder="数量">
+            <span>@</span><input data-f="aprice" type="text" inputmode="decimal" placeholder="价格">
+            <button class="mini" type="button" data-act="add" data-code="${inst.code}">追加(重算均价)</button>
+          </div>
           ${rulerHtml(inst)}
         </div>
         <div class="right">
@@ -302,6 +359,8 @@ function build() {
     });
   });
   wireDrag();
+  wirePositions();
+  renderPortfolio();
   // 默认全部加载(轻微错峰,避免瞬时 9 个并发)
   BANDS.instruments.forEach((inst, i) => setTimeout(() => loadChart(inst.code, DEFAULT_PERIOD), i * 120));
 }
@@ -466,6 +525,209 @@ function drawChart(code, period, allPoints) {
   });
 }
 
+/* ================= 持仓(数量 + 成本均价,仅存本浏览器 localStorage) ================= */
+const POS_KEY = "positions.v1";
+let POS = loadPos();
+const LASTQ = {}; // code -> 最近一次报价
+
+function loadPos() {
+  try { const o = JSON.parse(localStorage.getItem(POS_KEY)); return (o && typeof o === "object") ? o : {}; } catch { return {}; }
+}
+function savePos() { try { localStorage.setItem(POS_KEY, JSON.stringify(POS)); } catch {} }
+
+const num = s => { const v = parseFloat(String(s ?? "").replace(",", ".").replace(/\s/g, "")); return isFinite(v) ? v : NaN; };
+function posOf(code) {
+  const p = POS[code]; if (!p) return null;
+  const qty = num(p.qty), avg = num(p.avg);
+  if (!(qty > 0) || !(avg >= 0)) return null;
+  return { qty, avg };
+}
+const money = (v, cur) => (v == null || !isFinite(v)) ? "—"
+  : (cur || "") + v.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const signedMoney = (v, cur) => (v == null || !isFinite(v)) ? "—"
+  : (v > 0 ? "+" : v < 0 ? "-" : "") + (cur || "") + Math.abs(v).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const signedPct = p => (p == null || !isFinite(p)) ? "" : (p > 0 ? "+" : p < 0 ? "-" : "") + Math.abs(p).toFixed(2) + "%";
+const qtyFmt = q => q.toLocaleString("fr-FR", { maximumFractionDigits: 6 });
+const plCls = v => (v == null || !isFinite(v)) ? "flat" : v > 0.005 ? "up" : v < -0.005 ? "dn" : "flat";
+
+// 单标的持仓指标:成本 / 市值 / 浮动盈亏 / 今日盈亏(用当日涨跌%反推前收)
+function posMetrics(inst) {
+  const p = posOf(inst.code); if (!p) return null;
+  const q = LASTQ[inst.code] || {};
+  const last = (q.price != null && isFinite(q.price)) ? q.price : null;
+  const cost = p.qty * p.avg;
+  const val = last == null ? null : p.qty * last;
+  const pl = val == null ? null : val - cost;
+  const plPct = (pl == null || !(cost > 0)) ? null : (pl / cost) * 100;
+  let day = null;
+  if (last != null && q.pct != null && isFinite(q.pct) && q.pct > -100) {
+    const prev = last / (1 + q.pct / 100);
+    if (isFinite(prev)) day = p.qty * (last - prev);
+  }
+  return { qty: p.qty, avg: p.avg, cur: inst.currency || "", last, cost, val, pl, plPct, day };
+}
+
+function renderPortfolio() {
+  if (!BANDS) return;
+  // 1) 每张卡的持仓行
+  for (const inst of BANDS.instruments) {
+    const el = document.querySelector(`[data-pos="${inst.code}"]`);
+    if (!el) continue;
+    const m = posMetrics(inst);
+    if (!m) {
+      el.innerHTML = `<button class="mini" type="button" data-act="edit" data-code="${inst.code}">＋ 录入持仓</button>`;
+      continue;
+    }
+    el.innerHTML =
+      `<span>持仓 <b>${qtyFmt(m.qty)}</b> · 均价 ${money(m.avg, m.cur)} · 市值 <b>${money(m.val, m.cur)}</b></span>` +
+      `<span class="num ${plCls(m.pl)}"><b>${signedMoney(m.pl, m.cur)}</b> ${signedPct(m.plPct)}</span>` +
+      (m.day == null ? "" : `<span class="num ${plCls(m.day)}">今日 ${signedMoney(m.day, m.cur)}</span>`) +
+      `<button class="mini" type="button" data-act="edit" data-code="${inst.code}">✎ 改</button>`;
+  }
+  // 2) 总览面板
+  const held = BANDS.instruments.map(i => ({ inst: i, m: posMetrics(i) })).filter(x => x.m);
+  const body = document.getElementById("pfbody");
+  if (!held.length) {
+    body.innerHTML = `<div class="pfhint">未录入持仓 · 在下方任一卡片点「＋ 录入持仓」填数量与成本均价(只存本浏览器)</div>`;
+    return;
+  }
+  const tot = {};
+  for (const { m } of held) {
+    const t = tot[m.cur] || (tot[m.cur] = { cost: 0, val: 0, pl: 0, day: 0, missing: 0, dayMissing: 0 });
+    t.cost += m.cost;
+    if (m.val == null) { t.missing++; } else { t.val += m.val; t.pl += m.pl; }
+    if (m.day == null) t.dayMissing++; else t.day += m.day;
+  }
+  const curs = Object.keys(tot);
+  const kpis = curs.map(cur => {
+    const t = tot[cur], pct = t.cost > 0 ? (t.pl / t.cost) * 100 : null;
+    return `<div class="kpi"><div class="k">总市值 ${cur || ""}</div><div class="v">${money(t.val, cur)}</div>
+              <div class="s">成本 ${money(t.cost, cur)}${t.missing ? " · " + t.missing + " 项缺价" : ""}</div></div>
+            <div class="kpi"><div class="k">浮动盈亏 ${cur || ""}</div>
+              <div class="v num ${plCls(t.pl)}">${signedMoney(t.pl, cur)}</div>
+              <div class="s num ${plCls(t.pl)}">${signedPct(pct)}</div></div>
+            <div class="kpi"><div class="k">今日盈亏 ${cur || ""}</div>
+              <div class="v num ${plCls(t.day)}">${signedMoney(t.day, cur)}</div>
+              <div class="s">${t.dayMissing ? t.dayMissing + " 项无当日涨跌" : "全部标的已计入"}</div></div>`;
+  }).join("");
+  const rows = held.map(({ inst, m }) => {
+    const t = tot[m.cur];
+    const w = (m.val != null && t.val > 0) ? (m.val / t.val) * 100 : null;
+    return `<tr>
+      <td class="l"><button class="jump" type="button" data-act="jump" data-code="${inst.code}">${inst.short}</button></td>
+      <td class="l" style="color:var(--faint)">${inst.name}</td>
+      <td>${qtyFmt(m.qty)}</td>
+      <td>${money(m.avg, m.cur)}</td>
+      <td>${money(m.last, m.cur)}</td>
+      <td>${money(m.cost, m.cur)}</td>
+      <td>${money(m.val, m.cur)}</td>
+      <td class="num ${plCls(m.pl)}"><b>${signedMoney(m.pl, m.cur)}</b></td>
+      <td class="num ${plCls(m.plPct)}">${signedPct(m.plPct)}</td>
+      <td class="num ${plCls(m.day)}">${m.day == null ? "—" : signedMoney(m.day, m.cur)}</td>
+      <td>${w == null ? "—" : w.toFixed(1) + "%"}</td>
+    </tr>`;
+  }).join("");
+  const totRows = curs.map(cur => {
+    const t = tot[cur], pct = t.cost > 0 ? (t.pl / t.cost) * 100 : null;
+    return `<tr class="tot">
+      <td class="l">合计</td><td class="l">${cur || "—"}${curs.length > 1 ? "(按币种分列,未换汇)" : ""}</td>
+      <td></td><td></td><td></td>
+      <td>${money(t.cost, cur)}</td><td>${money(t.val, cur)}</td>
+      <td class="num ${plCls(t.pl)}">${signedMoney(t.pl, cur)}</td>
+      <td class="num ${plCls(pct)}">${signedPct(pct)}</td>
+      <td class="num ${plCls(t.day)}">${signedMoney(t.day, cur)}</td>
+      <td>100%</td></tr>`;
+  }).join("");
+  body.innerHTML = `<div class="kpis">${kpis}</div>
+    <div class="ptable"><table class="pf">
+      <thead><tr>
+        <th class="l">代码</th><th class="l">名称</th><th>数量</th><th>成本均价</th><th>现价</th>
+        <th>成本</th><th>市值</th><th>浮动盈亏</th><th>%</th><th>今日</th><th>占比</th>
+      </tr></thead>
+      <tbody>${rows}${totRows}</tbody>
+    </table></div>`;
+}
+
+function openPosForm(code) {
+  const f = document.querySelector(`[data-posform="${code}"]`);
+  if (!f) return;
+  const p = POS[code] || {};
+  f.querySelector('[data-f="qty"]').value = p.qty ?? "";
+  f.querySelector('[data-f="avg"]').value = p.avg ?? "";
+  f.querySelector('[data-f="aqty"]').value = "";
+  f.querySelector('[data-f="aprice"]').value = "";
+  f.classList.add("on");
+  f.querySelector('[data-f="qty"]').focus();
+}
+
+function wirePositions() {
+  document.getElementById("groups").addEventListener("click", e => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    const code = b.dataset.code, f = document.querySelector(`[data-posform="${code}"]`);
+    if (b.dataset.act === "edit") {
+      if (f.classList.contains("on")) f.classList.remove("on"); else openPosForm(code);
+      return;
+    }
+    if (b.dataset.act === "save") {
+      const qty = num(f.querySelector('[data-f="qty"]').value);
+      const avg = num(f.querySelector('[data-f="avg"]').value);
+      if (qty > 0 && avg >= 0) POS[code] = { qty, avg }; else delete POS[code];
+      savePos(); f.classList.remove("on"); renderPortfolio();
+      return;
+    }
+    if (b.dataset.act === "clear") { delete POS[code]; savePos(); f.classList.remove("on"); renderPortfolio(); return; }
+    if (b.dataset.act === "add") {
+      const aq = num(f.querySelector('[data-f="aqty"]').value);
+      const ap = num(f.querySelector('[data-f="aprice"]').value);
+      if (!(aq > 0) || !(ap >= 0)) return;
+      const old = posOf(code);
+      const qty = (old ? old.qty : 0) + aq;
+      const avg = ((old ? old.qty * old.avg : 0) + aq * ap) / qty;
+      POS[code] = { qty, avg: Math.round(avg * 1e6) / 1e6 };
+      savePos();
+      f.querySelector('[data-f="qty"]').value = POS[code].qty;
+      f.querySelector('[data-f="avg"]').value = POS[code].avg;
+      f.querySelector('[data-f="aqty"]').value = "";
+      f.querySelector('[data-f="aprice"]').value = "";
+      renderPortfolio();
+    }
+  });
+  document.getElementById("pfbody").addEventListener("click", e => {
+    const b = e.target.closest('[data-act="jump"]');
+    if (!b) return;
+    const card = document.getElementById("card-" + b.dataset.code);
+    if (!card) return;
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    openPosForm(b.dataset.code);
+  });
+  document.getElementById("pf-export").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify({ kind: "invest-dashboard.positions", v: 1, positions: POS }, null, 2)],
+      { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "positions-" + new Date().toISOString().slice(0, 10) + ".json";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+  document.getElementById("pf-import").addEventListener("click", () => document.getElementById("pf-file").click());
+  document.getElementById("pf-file").addEventListener("change", async e => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const j = JSON.parse(await file.text());
+      const p = j.positions || j;
+      if (!p || typeof p !== "object") throw new Error("格式不对");
+      const n = Object.keys(p).length;
+      if (!confirm(`导入 ${n} 条持仓,将覆盖当前浏览器内已存的持仓。继续?`)) return;
+      POS = p; savePos(); renderPortfolio();
+    } catch (err) {
+      alert("导入失败:" + err.message);
+    }
+  });
+}
+
 function applyQuotes(payload) {
   const now = new Date();
   let anyOk = false;
@@ -479,6 +741,7 @@ function applyQuotes(payload) {
     const markEl = document.querySelector(`[data-mark="${inst.code}"]`);
     if (q.price != null) {
       anyOk = true;
+      LASTQ[inst.code] = q;
       priceEl.textContent = fmtPrice(q.price, inst.currency);
       chgEl.textContent = fmtPct(q.pct);
       chgEl.className = "chg " + pctCls(q.pct);
@@ -497,6 +760,7 @@ function applyQuotes(payload) {
       }
     }
   }
+  renderPortfolio();
   const dot = document.getElementById("live-dot");
   dot.className = "dot" + (anyOk ? "" : " err");
   document.getElementById("last-refresh").textContent =
