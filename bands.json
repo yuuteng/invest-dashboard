@@ -117,6 +117,22 @@
       "earnings": "2026-10-22"
     },
     {
+      "code": "1rPOVH",
+      "yahoo": "OVH.PA",
+      "name": "OVHcloud",
+      "short": "OVH",
+      "group": "stocks",
+      "currency": "€",
+      "green": null,
+      "strong": null,
+      "yellow": null,
+      "axis": null,
+      "watch": "无研究报告,价位带未定(可跑 /investment-research 定带)· FY 截至 8/31,年报 10/20 待官方 IR 确认",
+      "report": null,
+      "alert": null,
+      "earnings": "2026-10-20"
+    },
+    {
       "code": "1rTWPEA",
       "yahoo": "WPEA.PA",
       "name": "iShares MSCI World Swap PEA",
@@ -149,6 +165,24 @@
       "tag": "战术仓 · 论点锚定带(有效至2027-01)",
       "watch": "主锚 P/B 2.26 近十年高位 · 铜价历史新高 · 失效看中国需求/供给纪律",
       "report": "BRES_etf_recheck_20260730",
+      "alert": null
+    },
+    {
+      "code": "0P0001PRAT",
+      "yahoo": "0P0001PRAT.F",
+      "page": "/bourse/opcvm/cours/0P0001PRAT/",
+      "name": "PEA Profile Dynamique C",
+      "short": "PEA Dyn C",
+      "group": "fund",
+      "currency": "€",
+      "green": null,
+      "strong": null,
+      "yellow": null,
+      "axis": null,
+      "noIntraday": true,
+      "tag": "OPCVM 组合基金 · 每日净值",
+      "watch": "ISIN FR001400AEJ2 · 无研究报告,价位带未定(可跑 /etf-research 定带)",
+      "report": null,
       "alert": null
     },
     {

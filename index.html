@@ -215,9 +215,12 @@
 </div>
 
 <script>
-const GROUP_TITLES = { stocks: "个股", etf: "ETF", index: "指数参考" };
+const GROUP_TITLES = { stocks: "个股", etf: "ETF", fund: "基金 · OPCVM", index: "指数参考" };
 const PERIODS = ["1J","5J","1M","3M","6M","1A","5A","10A"];
 const DEFAULT_PERIOD = "1J";
+// OPCVM 只有每日净值,GetTicksEOD 的 1J/5J 分钟线返回空 → 隐藏这两档,默认 1M
+const periodsOf = inst => inst.noIntraday ? PERIODS.filter(p => p !== "1J" && p !== "5J") : PERIODS;
+const defPeriodOf = inst => inst.noIntraday ? "1M" : DEFAULT_PERIOD;
 const POLL_MS = 15000;
 let BANDS = null;
 const histCache = {}; // code|period -> {at, points}
@@ -304,7 +307,7 @@ function wireDrag() {
 
 function build() {
   const root = document.getElementById("groups");
-  const order = ["stocks", "etf", "index"];
+  const order = ["stocks", "etf", "fund", "index"];
   const saved = loadOrder();
   root.innerHTML = order.map(gr => {
     const list = BANDS.instruments.filter(i => i.group === gr);
@@ -338,7 +341,7 @@ function build() {
         </div>
         <div class="right">
           <div class="ptabs" data-ptabs="${inst.code}">
-            ${PERIODS.map(p => `<button class="ptab${p === DEFAULT_PERIOD ? " on" : ""}" type="button" data-period="${p}">${p}</button>`).join("")}
+            ${periodsOf(inst).map(p => `<button class="ptab${p === defPeriodOf(inst) ? " on" : ""}" type="button" data-period="${p}">${p}</button>`).join("")}
           </div>
           <div class="chartwrap" data-chartwrap="${inst.code}">
             <div class="cstatus">加载中…</div>
@@ -362,7 +365,7 @@ function build() {
   wirePositions();
   renderPortfolio();
   // 默认全部加载(轻微错峰,避免瞬时 9 个并发)
-  BANDS.instruments.forEach((inst, i) => setTimeout(() => loadChart(inst.code, DEFAULT_PERIOD), i * 120));
+  BANDS.instruments.forEach((inst, i) => setTimeout(() => loadChart(inst.code, defPeriodOf(inst)), i * 120));
 }
 
 async function loadChart(code, period) {
