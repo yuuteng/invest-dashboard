@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-30",
+  "updated": "2026-08-28",
   "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。earnings = 下次财报日(个股,过期页面变红提醒跑 /earnings-review,复检后更新为下一季日期)。分析 skill 更新此文件后 git push 即自动部署。",
   "instruments": [
     {
@@ -131,6 +131,25 @@
       "report": null,
       "alert": null,
       "earnings": "2026-10-20"
+    },
+    {
+      "code": "1rAEXO",
+      "yahoo": "EXO.AS",
+      "name": "EXOR",
+      "short": "EXO",
+      "group": "stocks",
+      "currency": "€",
+      "green": 75,
+      "strong": 65,
+      "yellow": 98,
+      "axis": [
+        55,
+        110
+      ],
+      "watch": "NAV 折价 ~57%(历史极端)· 回购增厚为主引擎 · 盯税案/€3bn 待投/折价是否随回购收窄 · 离场带=中性情景目标 €98.4",
+      "report": "EXOR投资研究报告_20260828",
+      "alert": null,
+      "earnings": "2026-09-22"
     },
     {
       "code": "1rTWPEA",
