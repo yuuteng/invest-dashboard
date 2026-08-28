@@ -152,6 +152,25 @@
       "earnings": "2026-09-22"
     },
     {
+      "code": "1rPTTE",
+      "yahoo": "TTE.PA",
+      "name": "TotalEnergies",
+      "short": "TTE",
+      "group": "stocks",
+      "currency": "€",
+      "green": 68,
+      "strong": 55,
+      "yellow": 77,
+      "axis": [
+        50,
+        85
+      ],
+      "watch": "现价高位缺安全边际,等 <€68 · 盯布伦特 vs $65 回购线 / gearing <20% / 电力 ROACE ≥10% · 偏高带=乐观情景目标 €77",
+      "report": "TotalEnergies投资研究报告_20260828",
+      "alert": null,
+      "earnings": "2026-10-29"
+    },
+    {
       "code": "1rTWPEA",
       "yahoo": "WPEA.PA",
       "name": "iShares MSCI World Swap PEA",
