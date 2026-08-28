@@ -17,6 +17,7 @@
 | `bands.json` | **数据核心**:标的池 + 价位带 + 观察哨 + 报告名。json 即数据库,git 即版本史 |
 | `api/quotes.js` | 报价代理:Bourso 主源(解析 `data-ist-last`/`data-ist-variation` 首个匹配)→ 失败 Yahoo v8 chart 补位 → 再失败返回上次值标 stale;s-maxage=15 |
 | `api/history.js` | 历史序列代理:全部走 `GetTicksEOD`(length≤5 返回分钟线,其余日线);**必须带 `X-Requested-With: XMLHttpRequest` 头,否则返回空数组** |
+| `api/indicators.js` | 日线技术指标:52周最高收盘 / MA200 / RSI(14) Wilder,`GetTicksEOD length=365` → 失败 Yahoo `range=1y` 补位;s-maxage=3600。回撤52W/乖离MA200 由前端用实时价折算;图上 MA200 点线由前端取 `period=10A` 滚动计算(仅 1M 及以上窗口,偏离窗口价域 ±15% 的段不画不定标,避免压扁价格线) |
 | `scripts/dev_server.js` | 本地测试:`node scripts/dev_server.js` → localhost:8899,模拟 Vercel 路由 |
 
 ## 维护规约(重要)
