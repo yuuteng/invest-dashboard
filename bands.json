@@ -123,12 +123,15 @@
       "short": "OVH",
       "group": "stocks",
       "currency": "€",
-      "green": null,
-      "strong": null,
-      "yellow": null,
-      "axis": null,
-      "watch": "无研究报告,价位带未定(可跑 /investment-research 定带)· FY 截至 8/31,年报 10/20 待官方 IR 确认",
-      "report": null,
+      "green": 10,
+      "strong": 8,
+      "yellow": 16,
+      "axis": [
+        6,
+        22
+      ],
+      "watch": "诚实口径 Base €11.4 / Bull €16.1 —— 现价已越乐观情景,偏高不追 · 涨的是主权+AI叙事非业绩(增速仍 6%)· ⚠️CFO 8/31 离任、代理 CFO · FY2026 年报 10/20 验 levered FCF 是否真转正 + AI 并购 ROI",
+      "report": "OVHcloud_增量复检_20260922",
       "alert": null,
       "earnings": "2026-10-20"
     },
