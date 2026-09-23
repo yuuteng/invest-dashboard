@@ -42,7 +42,7 @@
 node scripts/dev_server.js
 ```
 
-打开 http://localhost:8899/。
+打开 <http://localhost:8899/> 即可。
 
 ## 免责声明
 
