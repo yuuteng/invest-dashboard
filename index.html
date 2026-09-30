@@ -124,6 +124,7 @@
   .istat b { font-weight:700; color:var(--soft); }
   .istat.good b { color:var(--good); }
   .istat.warn b { color:var(--warn); }
+  .istat.crit b { color:var(--crit); }
 
   .chip { font-family:var(--mono); font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:2px; white-space:nowrap;
           border:1px solid transparent; display:inline-block; }
@@ -240,6 +241,7 @@ const curPeriod = {}; // code -> period
 const chartView = {}; // code -> {key, a, b, pan} 滚轮缩放窗口(a/b 为全量数据的小数索引)
 const maCache = {}; // code -> {map: Map(t->ma200)} | {pending: Promise} 由 10A 日线滚动计算
 let INDI = {}; // code -> {high52w, ma200, rsi14, lastClose, asOf} 来自 /api/indicators,1h 级
+let SPREAD = {}; // pair -> {bps, closes:[{d,bps}]} 来自 /api/spread,5 分钟级
 const isDaily = p => p !== "1J" && p !== "5J";
 
 const fmtPrice = (v, cur) => v == null ? "—" : (cur || "") + v.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: v < 10 ? 3 : 2 });
@@ -258,8 +260,21 @@ function earnBadge(inst) {
   return `<span class="earn">📅 财报 ${dm} · ${days}天</span>`;
 }
 
+// bands.json 的 spread: {pair, warn?, crit?, days?}。crit 判定 = 最近 days 个收盘全部 ≥ crit(盘中值不算)
+function spreadState(inst) {
+  const cfg = inst.spread, s = cfg && SPREAD[cfg.pair];
+  if (!s || s.bps == null) return null;
+  const days = cfg.days || 3;
+  const last = (s.closes || []).slice(-days);
+  const crit = cfg.crit != null && last.length === days && last.every(c => c.bps >= cfg.crit);
+  const cls = crit ? "crit" : cfg.warn != null && s.bps >= cfg.warn ? "warn" : "";
+  return { cfg, s, days, crit, cls };
+}
+
 function statusOf(inst, price) {
   if (inst.alert) return { cls: "alert", label: "🔴 " + inst.alert };
+  const sp = spreadState(inst);
+  if (sp && sp.crit) return { cls: "alert", label: `🔴 ${sp.cfg.pair} 连续${sp.days}日收盘≥${sp.cfg.crit}bps` };
   if (inst.green == null && inst.yellow == null) return { cls: "tag", label: inst.tag || "带未定 · 仅价格" };
   if (price == null) return { cls: "tag", label: "等待数据" };
   if (inst.strong != null && price <= inst.strong) return { cls: "buy", label: "🟢 强买区" };
@@ -808,8 +823,36 @@ function renderIndicators() {
       const cls = ind.rsi14 <= 30 ? "good" : ind.rsi14 >= 70 ? "warn" : "";
       bits.push(`<span class="istat ${cls}" title="日线 RSI(14),Wilder 平滑(≤30 超卖绿显 / ≥70 超买黄显)">RSI14 <b>${ind.rsi14.toFixed(0)}</b></span>`);
     }
+    const sp = spreadState(inst);
+    if (sp) {
+      const fmtD = d => new Date(d * 86400000).toISOString().slice(5, 10).replace("-", "/");
+      const hist = (sp.s.closes || []).slice(-sp.days).map(c => fmtD(c.d) + " " + c.bps).join(" · ");
+      const rule = sp.cfg.crit != null
+        ? `\n规则:连续 ${sp.days} 日收盘 ≥${sp.cfg.crit}bps 标红${sp.cfg.warn != null ? `;盘中 ≥${sp.cfg.warn} 黄显` : ""}`
+        : "\n仅展示,无阈值";
+      const stale = sp.s.stale ? "\n⚠ 数据滞留" : "";
+      bits.push(`<span class="istat ${sp.cls}" title="10 年期国债利差(实时)${rule}\n最近收盘:${hist}${stale}">${sp.cfg.pair} <b>${Math.round(sp.s.bps)}bps</b></span>`);
+    }
     el.innerHTML = bits.join("");
   }
+}
+
+// 利差刷新后:指标行重画 + 状态 chip 重判(crit 可能翻红)
+async function loadSpread() {
+  try {
+    const res = await fetch("/api/spread");
+    if (!res.ok) throw new Error(res.status);
+    SPREAD = (await res.json()).data || {};
+    renderIndicators();
+    for (const inst of BANDS.instruments) {
+      if (!inst.spread) continue;
+      const q = LASTQ[inst.code], chipEl = document.querySelector(`[data-chip="${inst.code}"]`);
+      if (!q || q.price == null || !chipEl) continue;
+      const st = statusOf(inst, q.price);
+      chipEl.className = "chip " + st.cls;
+      chipEl.textContent = st.label;
+    }
+  } catch (e) { /* 利差缺席不影响主功能 */ }
 }
 
 async function loadIndicators() {
@@ -914,6 +957,8 @@ fetch("bands.json").then(r => r.json()).then(b => {
   setInterval(poll, POLL_MS);
   loadIndicators();
   setInterval(loadIndicators, 3600_000); // 日线指标 1h 一刷,与服务端缓存同拍
+  loadSpread();
+  setInterval(loadSpread, 300_000); // 利差 5 分钟一刷,与服务端缓存同拍
 });
 </script>
 </body>

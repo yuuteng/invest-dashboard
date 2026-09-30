@@ -7,11 +7,12 @@ const ROOT = path.join(__dirname, "..");
 const quotes = require(path.join(ROOT, "api/quotes.js"));
 const history = require(path.join(ROOT, "api/history.js"));
 const indicators = require(path.join(ROOT, "api/indicators.js"));
+const spread = require(path.join(ROOT, "api/spread.js"));
 
 const MIME = { ".html": "text/html; charset=utf-8", ".json": "application/json; charset=utf-8", ".js": "text/javascript" };
 
 http.createServer(async (req, res) => {
-  const route = req.url.startsWith("/api/quotes") ? quotes : req.url.startsWith("/api/history") ? history : req.url.startsWith("/api/indicators") ? indicators : null;
+  const route = req.url.startsWith("/api/quotes") ? quotes : req.url.startsWith("/api/history") ? history : req.url.startsWith("/api/indicators") ? indicators : req.url.startsWith("/api/spread") ? spread : null;
   if (route) {
     const shim = {
       setHeader: (k, v) => res.setHeader(k, v),

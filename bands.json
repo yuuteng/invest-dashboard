@@ -38,7 +38,10 @@
       "watch": "3Q26 财报(10月末)· CBK 控制权 · Orcel 去留",
       "report": "UniCredit投资研究报告_20260729",
       "alert": null,
-      "earnings": "2026-10-21"
+      "earnings": "2026-10-21",
+      "spread": {
+        "pair": "BTP-Bund"
+      }
     },
     {
       "code": "1gISP",
@@ -57,7 +60,10 @@
       "watch": "9/10 EGM(MPS 增发)· Messina 是否加价",
       "report": "Intesa_Sanpaolo投资研究报告_20260729",
       "alert": null,
-      "earnings": "2026-10-30"
+      "earnings": "2026-10-30",
+      "spread": {
+        "pair": "BTP-Bund"
+      }
     },
     {
       "code": "1rPBNP",
@@ -73,10 +79,16 @@
         70,
         140
       ],
-      "watch": "⚠️ 减仓线半触发(OAT-Bund 113bps)· 倒阁 / Moody's 10/23 / 3Q 各减 1/3",
+      "watch": "⚠️ 减仓线半触发 · 倒阁 / Moody's 10/23 / 3Q 各减 1/3",
       "report": "BNP_Paribas_综合复检_20260922",
       "alert": null,
-      "earnings": "2026-10-28"
+      "earnings": "2026-10-28",
+      "spread": {
+        "pair": "OAT-Bund",
+        "warn": 110,
+        "crit": 120,
+        "days": 3
+      }
     },
     {
       "code": "1rPDSY",

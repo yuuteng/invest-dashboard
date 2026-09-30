@@ -17,6 +17,7 @@
 | `bands.json` | **数据核心**:标的池 + 价位带 + 观察哨 + 报告名。json 即数据库,git 即版本史 |
 | `api/quotes.js` | 报价代理:Bourso 主源(解析 `data-ist-last`/`data-ist-variation` 首个匹配)→ 失败 Yahoo v8 chart 补位 → 再失败返回上次值标 stale;s-maxage=15 |
 | `api/history.js` | 历史序列代理:全部走 `GetTicksEOD`(length≤5 返回分钟线,其余日线);**必须带 `X-Requested-With: XMLHttpRequest` 头,否则返回空数组** |
+| `api/spread.js` | 主权利差代理:OAT-Bund / BTP-Bund(10 年期,bps),实时值 + 最近 10 个收盘;腿取 Bourso `/bourse/taux/cours/{2xFRABM10A,2xDEUBM10A,2xITABM10A}/`;s-maxage=300 |
 | `api/indicators.js` | 日线技术指标:52周最高收盘 / MA200 / RSI(14) Wilder,`GetTicksEOD length=365` → 失败 Yahoo `range=1y` 补位;s-maxage=3600。回撤52W/乖离MA200 由前端用实时价折算;图上 MA200 点线由前端取 `period=10A` 滚动计算(仅 1M 及以上窗口,偏离窗口价域 ±15% 的段不画不定标,避免压扁价格线) |
 | `favicon.svg` / `favicon-32.png` / `apple-touch-icon.png` | 站点图标(蓝底白折线) |
 | `scripts/dev_server.js` | 本地测试:`node scripts/dev_server.js` → localhost:8899,模拟 Vercel 路由 |
@@ -26,9 +27,10 @@
 1. **报告更新 → 同步价位带**:每当库里出新研究报告/增量复检,更新 `bands.json` 对应标的的 `green/strong/yellow/axis/watch/report`,改 `updated` 日期,commit + push。字段可为 `null`(页面显示"带未定,仅价格")。
 2. **财报日提醒**:个股有 `earnings` 字段(下次财报日 `YYYY-MM-DD`)。页面角标:>14 天灰、≤14 天黄、当日/已过红("财报已出·待复检")。**每次 `/earnings-review` 复检后必须把 `earnings` 更新为下一季日期**,否则角标一直红。ETF/指数不填。
 3. **新增标的**:在 `bands.json.instruments` 加一条(必填 `code`=Bourso 代码、`yahoo`=备源代码、`name/short/group/currency`)。Bourso 代码在 boursorama.com 搜索标的后取 URL 中的代码(巴黎股 `1rPXXX`、意大利 `1gXXX`、trackers `1rTXXX`)。
-4. **信号离场**:某标的触发减仓信号时,把 `alert` 字段写成一句话(如 `"指引下修"`),页面变 🔴;解除填回 `null`。
-5. **视觉系统已定稿**(工程数据表风格,与 Obsidian 库投资卡片同族,双主题 token),不重做设计;改样式先看 `:root` token。
-6. Bourso 改版导致解析断裂:先查 `api/quotes.js` 的正则锚点(`c-instrument--last" data-ist-last>`),再查 `api/history.js` 两个接口返回结构。
+4. **主权利差(可选字段 `spread`)**:`{"pair":"OAT-Bund","warn":110,"crit":120,"days":3}`——指标行显示实时 bps(≥warn 黄显),**最近 days 个收盘全部 ≥crit 时状态 chip 自动变 🔴**(盘中值不算收盘)。只填 `pair` = 仅展示。目前 BNP 带阈值,UCG/ISP 仅展示 BTP-Bund。新增利差对改 `api/spread.js` 的 `PAIRS`。
+5. **信号离场**:某标的触发减仓信号时,把 `alert` 字段写成一句话(如 `"指引下修"`),页面变 🔴;解除填回 `null`。
+6. **视觉系统已定稿**(工程数据表风格,与 Obsidian 库投资卡片同族,双主题 token),不重做设计;改样式先看 `:root` token。
+7. Bourso 改版导致解析断裂:先查 `api/quotes.js` 的正则锚点(`c-instrument--last" data-ist-last>`),再查 `api/history.js` 两个接口返回结构。
 
 ## 技术备忘
 
@@ -37,6 +39,8 @@
 - 分钟线时间格式 `yyMMdd` + **当日分钟数**(后 4 位是 minutes-since-midnight,不是 HHmm:2607290540 = 2026-07-29 09:00 开盘,后 4 位 1055 = 17:35 收盘竞价);日线 `d` = 天数纪元(×86400000 = epoch ms)
 - Vercel Hobby 限额宽裕:s-maxage CDN 缓存挡掉大部分函数调用
 - 本地验证流程:`node scripts/dev_server.js` → 浏览器/Playwright 打 localhost:8899;测函数单独跑 `node -e "require('./api/quotes.js')(...)"`
+
+- **利差数据坑**:Bourso 法债日线会漏点(2026-09-28 缺失),漏点后末两根日期标签错一天。`api/spread.js` 已处理:每条腿丢末两根、昨收用页面精确的「clôture veille」、更早收盘按日期配对缺则跳过。收盘序列偶尔少一天属正常
 
 ## 红线
 
