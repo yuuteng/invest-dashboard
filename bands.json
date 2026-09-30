@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-23",
+  "updated": "2026-09-30",
   "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。earnings = 下次财报日(个股,过期页面变红提醒跑 /earnings-review,复检后更新为下一季日期)。分析 skill 更新此文件后 git push 即自动部署。",
   "instruments": [
     {
@@ -73,7 +73,7 @@
         70,
         140
       ],
-      "watch": "P/TBV ~1.02x(买点 0.9x≈€88.6)· ⚠️OAT-Bund 99bps 曾破100(减仓信号触碰,>110-120bps 或三大机构再下调法国则执行)· ECB 9/10 加息至 2.50% · 2026 无新回购 · 9/24 除息 €3.23 · 3Q26(10-28)验 ROTE 成色与 cost of risk 40bps",
+      "watch": "⚠️ 减仓线半触发(OAT-Bund 113bps)· 倒阁 / Moody's 10/23 / 3Q 各减 1/3",
       "report": "BNP_Paribas_综合复检_20260922",
       "alert": null,
       "earnings": "2026-10-28"
@@ -130,7 +130,7 @@
         6,
         22
       ],
-      "watch": "诚实口径 Base €11.4 / Bull €16.1 —— 现价已越乐观情景,偏高不追 · 涨的是主权+AI叙事非业绩(增速仍 6%)· ⚠️CFO 8/31 离任、代理 CFO · FY2026 年报 10/20 验 levered FCF 是否真转正 + AI 并购 ROI",
+      "watch": "已越乐观情景,不追 · CFO 离任 · 10/20 验 FCF 转正",
       "report": "OVHcloud_增量复检_20260922",
       "alert": null,
       "earnings": "2026-10-20"
@@ -149,7 +149,7 @@
         55,
         110
       ],
-      "watch": "HY2026(9/22):NAV/share €157.9 官方、半年 −3.9%(跑输 MSCI World 16pp)· 折价 ~54% · ✅€500M 回购落地(首笔 €125M,11 月底前)但仅占待投现金 €4B 的 12%、买满增厚 NAV +1.9% · 10/16 Elkann 预审 · 11 月 Tata/Iveco 交割 · 下次财报 2027-03",
+      "watch": "折价 ~54% · €500M 回购启动 · NAV 半年 −3.9%",
       "report": "EXOR投资研究报告_20260828",
       "alert": null,
       "earnings": "2027-03-20"
@@ -168,7 +168,7 @@
         50,
         85
       ],
-      "watch": "现价高位缺安全边际,等 <€68 · 盯布伦特 vs $65 回购线 / gearing <20% / 电力 ROACE ≥10% · 偏高带=乐观情景目标 €77",
+      "watch": "等 <€68 · 盯布伦特 $65 回购线",
       "report": "TotalEnergies投资研究报告_20260828",
       "alert": null,
       "earnings": "2026-10-29"
