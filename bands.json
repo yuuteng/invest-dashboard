@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-30",
+  "updated": "2026-10-06",
   "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。earnings = 下次财报日(个股,过期页面变红提醒跑 /earnings-review,复检后更新为下一季日期)。分析 skill 更新此文件后 git push 即自动部署。",
   "instruments": [
     {
@@ -79,9 +79,9 @@
         70,
         140
       ],
-      "watch": "⚠️ 减仓线半触发 · 倒阁 / Moody's 10/23 / 3Q 各减 1/3",
+      "watch": "下一批:Moody's 10/23 降级 · 3Q 10/28 CoR>40bps",
       "report": "BNP_Paribas_综合复检_20260922",
-      "alert": null,
+      "alert": "利差条件①成立 → 减第一批 28 股",
       "earnings": "2026-10-28",
       "spread": {
         "pair": "OAT-Bund",
@@ -161,7 +161,7 @@
         55,
         110
       ],
-      "watch": "折价 ~54% · €500M 回购启动 · NAV 半年 −3.9%",
+      "watch": "折价 ~56% · 回购周买 €46M · 10/16 Elkann 预审",
       "report": "EXOR投资研究报告_20260828",
       "alert": null,
       "earnings": "2027-03-20"
