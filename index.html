@@ -830,8 +830,16 @@ function renderIndicators() {
       const rule = sp.cfg.crit != null
         ? `\n规则:连续 ${sp.days} 日收盘 ≥${sp.cfg.crit}bps 标红${sp.cfg.warn != null ? `;盘中 ≥${sp.cfg.warn} 黄显` : ""}`
         : "\n仅展示,无阈值";
-      const stale = sp.s.stale ? "\n⚠ 数据滞留" : "";
-      bits.push(`<span class="istat ${sp.cls}" title="10 年期国债利差(实时)${rule}\n最近收盘:${hist}${stale}">${sp.cfg.pair} <b>${Math.round(sp.s.bps)}bps</b></span>`);
+      const SRC = { ideal: "ideal-investisseur", bourso: "Boursorama" };
+      const warns = [];
+      if (sp.s.stale) warns.push("⚠ 接口失败,显示的是上次成功值");
+      if (sp.s.staleLegs && sp.s.staleLegs.length) warns.push(`⚠ Bourso 数据滞留(${sp.s.staleLegs.join(", ")}),实时值改用 ${SRC[sp.s.liveSrc]}`);
+      if (sp.s.conflict) warns.push(`⚠ 两源不一致 ${fmtD(sp.s.conflict.d)}:ideal ${sp.s.conflict.ideal} / Bourso ${sp.s.conflict.bourso}`);
+      const backup = sp.s.closeSrc === "bourso" && sp.cfg.crit != null; // 有阈值的利差才在意收盘主源
+      if (backup) warns.push("⚠ 收盘值来自备源 Bourso(主源 ideal 抓取失败)");
+      const srcLine = `\n来源:实时 ${SRC[sp.s.liveSrc] || "?"} · 收盘 ${SRC[sp.s.closeSrc] || "?"}`;
+      const flag = warns.length ? " ⚠" : "";
+      bits.push(`<span class="istat ${sp.cls}" title="10 年期国债利差(实时)${rule}\n最近收盘:${hist}${srcLine}${warns.length ? "\n" + warns.join("\n") : ""}">${sp.cfg.pair} <b>${Math.round(sp.s.bps)}bps</b>${flag}</span>`);
     }
     el.innerHTML = bits.join("");
   }
