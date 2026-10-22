@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-18",
+  "updated": "2026-10-22",
   "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。earnings = 下次财报日(个股,过期页面变红提醒跑 /earnings-review,复检后更新为下一季日期)。分析 skill 更新此文件后 git push 即自动部署。",
   "instruments": [
     {
@@ -16,10 +16,10 @@
         20,
         48
       ],
-      "watch": "Wendel 配售窗口开 · 已入买点带 · 10月 Q3 看 Industry",
-      "report": "Bureau_Veritas_综合复检_20260730",
+      "watch": "Q3 有机 +6.2% 连续加速 · 出买点带,等 ≤€28.5",
+      "report": "Bureau_Veritas_Q3复检_20261022",
       "alert": null,
-      "earnings": "2026-10-21"
+      "earnings": "2027-02-25"
     },
     {
       "code": "1gUCG",
@@ -35,10 +35,10 @@
         50,
         130
       ],
-      "watch": "3Q26 财报(10月末)· CBK 控制权 · Orcel 去留",
-      "report": "UniCredit投资研究报告_20260729",
-      "alert": null,
-      "earnings": "2026-10-21",
+      "watch": "ECB 批准控股 CBK · 击球区暂停至 11/9",
+      "report": "UniCredit_复检_20261022",
+      "alert": "意大利银行税草案(减仓信号④)· 11/9 定",
+      "earnings": "2026-11-09",
       "spread": {
         "pair": "BTP-Bund"
       }
@@ -142,10 +142,10 @@
         6,
         22
       ],
-      "watch": "已越乐观情景,不追 · CFO 离任 · 10/20 验 FCF 转正",
-      "report": "OVHcloud_增量复检_20260922",
+      "watch": "FY26 全部达标、FCF 首次转正 · 评级 2.5 · 11/19 AI Summit",
+      "report": "OVHcloud_FY26复检_20261022",
       "alert": null,
-      "earnings": "2026-10-20"
+      "earnings": "2027-01-07"
     },
     {
       "code": "1rAEXO",
