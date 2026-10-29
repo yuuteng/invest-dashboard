@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-22",
+  "updated": "2026-10-29",
   "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。earnings = 下次财报日(个股,过期页面变红提醒跑 /earnings-review,复检后更新为下一季日期)。分析 skill 更新此文件后 git push 即自动部署。",
   "instruments": [
     {
@@ -72,17 +72,17 @@
       "short": "BNP",
       "group": "stocks",
       "currency": "€",
-      "green": 92,
-      "strong": 88,
+      "green": 90.5,
+      "strong": 87.5,
       "yellow": 120,
       "axis": [
         70,
         140
       ],
-      "watch": "利差期间暂停加仓 · Moody's 10/23 · 3Q 10/28",
-      "report": "BNP_Paribas_综合复检_20260922",
-      "alert": "条件①持续(利差 ~135)· 第一批未执行",
-      "earnings": "2026-10-28",
+      "watch": "3Q 超预期、€13 亿回购 · S&P 11/27",
+      "report": "BNP_Paribas_3Q26复检_20261029",
+      "alert": "利差 ~155 · 规则①待修订(法债敞口影响小)",
+      "earnings": "2027-02-04",
       "spread": {
         "pair": "OAT-Bund",
         "warn": 110,
