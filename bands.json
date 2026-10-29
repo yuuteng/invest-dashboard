@@ -79,15 +79,13 @@
         70,
         140
       ],
-      "watch": "3Q 超预期、€13 亿回购 · S&P 11/27",
+      "watch": "利差仅观察 · S&P 11/27 · 预算通过前不加仓",
       "report": "BNP_Paribas_3Q26复检_20261029",
-      "alert": "利差 ~155 · 规则①待修订(法债敞口影响小)",
+      "alert": null,
       "earnings": "2027-02-04",
       "spread": {
         "pair": "OAT-Bund",
-        "warn": 110,
-        "crit": 120,
-        "days": 3
+        "warn": 110
       }
     },
     {
