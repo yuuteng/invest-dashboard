@@ -106,6 +106,8 @@
   .who .watch { font-size:11px; color:var(--soft); margin-top:4px; line-height:1.5; }
   .earn { display:inline-block; font-family:var(--mono); font-size:10px; padding:1px 6px; border-radius:3px;
           margin-left:6px; vertical-align:1px; color:var(--faint); border:1px solid var(--line); }
+  /* 报告名长短不一,徽章跟在行尾会随机折行:固定独占一行 */
+  .who .cd .earn { display:table; margin:5px 0 0; }
   .earn.soon { color:var(--warn); border-color:var(--warn); background:var(--warnBg); font-weight:700; }
   .earn.due { color:var(--crit); border-color:var(--crit); background:var(--critBg); font-weight:700; }
 
@@ -132,6 +134,8 @@
   .chip.fair  { color:var(--accentInk); background:var(--accBg); border-color:var(--accent); }
   .chip.high  { color:var(--warn); background:var(--warnBg); border-color:var(--warn); }
   .chip.alert { color:var(--crit); background:var(--critBg); border-color:var(--crit); }
+  /* alert 是一句话不是短标签:独占一行、可换行、用正文字体(等宽粗体排中文会糊) */
+  .chip.alert { flex:1 1 100%; white-space:normal; font-family:var(--sans); font-weight:600; font-size:12px; line-height:1.45; padding:6px 9px; }
   .chip.tag   { color:var(--soft); background:transparent; border-color:var(--line); font-weight:600; }
 
   .track { position:relative; height:10px; border:1px solid var(--line); background:var(--panel); }
