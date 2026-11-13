@@ -57,9 +57,9 @@
         3.5,
         8.5
       ],
-      "watch": "MPS 换股期 11/24–1/22 · 反垄断裁决 · 预算法年底定稿",
+      "watch": "银行税信号③形式触发,暂不减仓 · MPS 换股 11/24–1/22 · 预算法年底定稿",
       "report": "Intesa_Sanpaolo_3Q26复检_20261113",
-      "alert": "银行税草案(减仓信号③)形式触发 · 暂不减仓 · 年底定稿",
+      "alert": null,
       "earnings": "2027-02-02",
       "spread": {
         "pair": "BTP-Bund"
@@ -95,8 +95,8 @@
       "short": "DSY",
       "group": "stocks",
       "currency": "€",
-      "green": 20,
-      "strong": 17,
+      "green": 19,
+      "strong": 16,
       "yellow": 30,
       "axis": [
         10,
