@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-29",
+  "updated": "2026-11-13",
   "note": "价位带来自 Obsidian 库内研究报告;null = 带未定,页面仅显示价格。earnings = 下次财报日(个股,过期页面变红提醒跑 /earnings-review,复检后更新为下一季日期)。分析 skill 更新此文件后 git push 即自动部署。",
   "instruments": [
     {
@@ -35,10 +35,10 @@
         50,
         130
       ],
-      "watch": "ECB 批准控股 CBK · 击球区暂停至 11/9",
-      "report": "UniCredit_复检_20261022",
-      "alert": "意大利银行税草案(减仓信号④)· 11/9 定",
-      "earnings": "2026-11-09",
+      "watch": "3Q 超预期指引上调 · 击球区恢复≤70 · CBK 月底交割",
+      "report": "UniCredit_复检_20261113",
+      "alert": "意大利银行税(减仓信号④)仍触发 · 年底前议会终稿定",
+      "earnings": "2027-02-09",
       "spread": {
         "pair": "BTP-Bund"
       }
@@ -57,10 +57,10 @@
         3.5,
         8.5
       ],
-      "watch": "9/10 EGM(MPS 增发)· Messina 是否加价",
-      "report": "Intesa_Sanpaolo投资研究报告_20260729",
-      "alert": null,
-      "earnings": "2026-10-30",
+      "watch": "MPS 换股期 11/24–1/22 · 反垄断裁决 · 预算法年底定稿",
+      "report": "Intesa_Sanpaolo_3Q26复检_20261113",
+      "alert": "银行税草案(减仓信号③)形式触发 · 暂不减仓 · 年底定稿",
+      "earnings": "2027-02-02",
       "spread": {
         "pair": "BTP-Bund"
       }
@@ -95,17 +95,17 @@
       "short": "DSY",
       "group": "stocks",
       "currency": "€",
-      "green": 19,
-      "strong": 16,
+      "green": 20,
+      "strong": 17,
       "yellow": 30,
       "axis": [
         10,
         36
       ],
-      "watch": "Q2 回暖 +4%cc · 盯 Q3 能否 +5%、Medidata 止血",
-      "report": "Dassault_Systemes_综合复检_20260730",
+      "watch": "Q3 +5%cc 达标、指引上调 · 盯 Q4 Medidata 转正、订阅回 +5%",
+      "report": "Dassault_Systemes_综合复检_20261113",
       "alert": null,
-      "earnings": "2026-10-28"
+      "earnings": "2027-02-03"
     },
     {
       "code": "1rPPUB",
@@ -121,10 +121,10 @@
         60,
         140
       ],
-      "watch": "H1 指引上调、零客户流失 · 已出便宜带,10/22 Q3 再验",
-      "report": "Publicis_综合复检_20260730",
+      "watch": "Q3 有机+5.0%三连加速、指引确认 · 现价€105近中枢,不追",
+      "report": "Publicis_综合复检_20261113",
       "alert": null,
-      "earnings": "2026-10-22"
+      "earnings": "2027-02-04"
     },
     {
       "code": "1rPOVH",
@@ -176,12 +176,12 @@
       "yellow": 77,
       "axis": [
         50,
-        85
+        90
       ],
-      "watch": "等 <€68 · 盯布伦特 $65 回购线",
-      "report": "TotalEnergies投资研究报告_20260828",
+      "watch": "等 <€68 · 布伦特 $96 含战争溢价 · 2/10 看 2027 回购",
+      "report": "TotalEnergies_3Q26复检_20261113",
       "alert": null,
-      "earnings": "2026-10-29"
+      "earnings": "2027-02-10"
     },
     {
       "code": "1rTWPEA",
