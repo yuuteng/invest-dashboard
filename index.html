@@ -240,6 +240,7 @@ const periodsOf = inst => inst.noIntraday ? PERIODS.filter(p => p !== "1J" && p 
 const defPeriodOf = inst => inst.noIntraday ? "1M" : DEFAULT_PERIOD;
 const POLL_MS = 15000;
 let BANDS = null;
+const CHART_RETRY_MS = [5000, 15000];
 const histCache = {}; // code|period -> {at, points}
 const curPeriod = {}; // code -> period
 const chartView = {}; // code -> {key, a, b, pan} 滚轮缩放窗口(a/b 为全量数据的小数索引)
@@ -403,7 +404,8 @@ function build() {
   BANDS.instruments.forEach((inst, i) => setTimeout(() => loadChart(inst.code, defPeriodOf(inst)), i * 120));
 }
 
-async function loadChart(code, period) {
+async function loadChart(code, period, attempt = 0) {
+  if (attempt && curPeriod[code] !== period) return;
   curPeriod[code] = period;
   const wrap = document.querySelector(`[data-chartwrap="${code}"]`);
   const key = code + "|" + period;
@@ -416,9 +418,12 @@ async function loadChart(code, period) {
     histCache[key] = { at: Date.now(), points: j.points };
     if (curPeriod[code] === period) drawWithMA(code, period, j.points);
   } catch (e) {
+    if (curPeriod[code] !== period) return;
     wrap.querySelector("svg")?.remove();
     wrap.querySelectorAll(".cstatus").forEach(n => n.remove());
-    wrap.insertAdjacentHTML("afterbegin", '<div class="cstatus">走势数据暂不可用,稍后重试</div>');
+    const delay = CHART_RETRY_MS[attempt];
+    wrap.insertAdjacentHTML("afterbegin", `<div class="cstatus">${delay ? "加载中…" : "走势数据暂不可用,稍后重试"}</div>`);
+    if (delay) setTimeout(() => loadChart(code, period, attempt + 1), delay);
   }
 }
 
